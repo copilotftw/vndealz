@@ -58,7 +58,7 @@ export async function moderateDeal(dealId: string, action: 'approve' | 'reject',
   
   // Send email to author
   if (deal.user?.email) {
-    const dealUrl = `${process.env.NEXT_PUBLIC_APP_URL}/deal/${deal.slug}`
+    const dealUrl = `${process.env.BETTER_AUTH_URL}/deal/${deal.slug}`
     
     if (action === 'approve') {
       const html = await render(DealApprovedEmail({
@@ -99,7 +99,7 @@ export async function moderateDeal(dealId: string, action: 'approve' | 'reject',
       const html = await render(DealAlertEmail({
         keyword: alert.keyword || deal.title,
         dealTitle: deal.title,
-        dealUrl: `${process.env.NEXT_PUBLIC_APP_URL}/deal/${deal.slug}`,
+        dealUrl: `${process.env.BETTER_AUTH_URL}/deal/${deal.slug}`,
         price: Number(deal.price),
         userName: alert.user.name || 'User'
       }))

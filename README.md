@@ -85,7 +85,7 @@ chown -R $USER:$USER /opt/vndealz
 
 Create the `.env` file at `/opt/vndealz/.env`:
 ```env
-NEXT_PUBLIC_APP_URL="https://your-domain.com"
+BETTER_AUTH_URL="https://your-domain.com"
 DATABASE_URL="mysql://vndealz:your_secure_password@127.0.0.1:3306/vndealz"
 REDIS_URL="redis://127.0.0.1:6379"
 BETTER_AUTH_SECRET="generate-a-random-secret"
