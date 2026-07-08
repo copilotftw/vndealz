@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Loader2 } from 'lucide-react'
-import { useRouter } from '@/i18n/navigation'
+import { useRouter } from 'next/navigation'
 
 export function CommentForm({ 
   dealId, 

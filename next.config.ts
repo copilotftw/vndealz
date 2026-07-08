@@ -15,6 +15,8 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'shopee.vn' },
       { protocol: 'https', hostname: 'lazada.vn' },
       { protocol: 'https', hostname: 'tiki.vn' },
+      { protocol: 'https', hostname: 'picsum.photos' },
+      { protocol: 'https', hostname: 'api.dicebear.com' },
       // Add more merchant domains as needed
     ],
   },

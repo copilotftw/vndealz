@@ -86,7 +86,10 @@ export async function getUserProfile(username: string) {
       tier: true,
       points: true,
       createdAt: true,
-      _count: { select: { deals: true, comments: true } }
+      _count: { select: { deals: true, comments: true } },
+      userBadges: {
+        include: { badge: true }
+      }
     }
   })
   

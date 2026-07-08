@@ -364,12 +364,13 @@ model Bookmark {
 }
 
 model DealAlert {
-  id         String   @id @default(cuid())
-  keyword    String?
-  merchant   String?
-  categoryId String?
-  active     Boolean  @default(true)
-  createdAt  DateTime @default(now())
+  id             String   @id @default(cuid())
+  keyword        String?
+  merchant       String?
+  categoryId     String?
+  minTemperature Int      @default(0)
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now())
 
   userId   String
   user     User      @relation(fields: [userId], references: [id])

@@ -36,13 +36,13 @@ export const categorySchema = z.object({
 })
 
 export const themeSchema = z.object({
-  layout: z.enum(['modern', 'minimalist', 'mydealz', 'aliexpress', 'shopee']),
+  layout: z.enum(['modern', 'minimalist', 'mydealz', 'aliexpress', 'shopee', 'amazon']),
   scale: z.enum(['xs', 'sm', 'md', 'lg', 'xl']),
   colorScheme: z.enum([
     'default', 'dark-orange', 'ocean', 'forest', 'sunset', 'midnight',
     'rose', 'monochrome', 'tet', 'christmas', 'mid-autumn', 'national-day',
   ]),
-  customCss: z.string().max(10000).optional(),
+  customCss: z.string().max(10000).nullable().optional(),
 })
 
 export const affiliateSchema = z.object({

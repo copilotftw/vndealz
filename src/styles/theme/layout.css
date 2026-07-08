@@ -1,0 +1,297 @@
+/* ══════════════════════════════════════ */
+/* NAV SCROLL ANIMATION — bouncy glass   */
+/* ══════════════════════════════════════ */
+.nav-scroll-container {
+  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+              opacity 0.35s ease,
+              box-shadow 0.3s ease;
+  will-change: transform, opacity;
+}
+.nav-visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+.nav-hidden {
+  transform: translateY(-110%);
+  opacity: 0;
+  pointer-events: none;
+}
+.nav-scrolled .site-nav,
+.nav-scrolled.site-nav {
+  box-shadow: 0 4px 30px rgba(0,0,0,0.08);
+}
+.nav-at-top .site-nav,
+.nav-at-top.site-nav {
+  box-shadow: none;
+}
+
+/* ══════════════════════════════════════ */
+/* DEAL GRID                             */
+/* ══════════════════════════════════════ */
+.deal-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-columns), 1fr);
+  gap: var(--card-gap);
+}
+/* Tablet */
+@media (max-width: 1024px) {
+  .deal-grid {
+    grid-template-columns: repeat(var(--grid-columns-tablet), 1fr);
+  }
+}
+/* Large phone */
+@media (max-width: 768px) {
+  .deal-grid {
+    grid-template-columns: repeat(var(--grid-columns-mobile), 1fr);
+    gap: 0.5rem;
+  }
+}
+/* Small phone */
+@media (max-width: 480px) {
+  .deal-grid {
+    grid-template-columns: repeat(var(--grid-columns-mobile), 1fr);
+    gap: 0.375rem;
+  }
+}
+
+/* ══════════════════════════════════════ */
+/* LAYOUT: MODERN — Glassmorphism        */
+/* ══════════════════════════════════════ */
+[data-layout="modern"] .deal-card {
+  backdrop-filter: blur(12px) saturate(160%);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.dark [data-layout="modern"] .deal-card {
+  border: 1px solid rgba(255,255,255,0.08);
+}
+[data-layout="modern"] .deal-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.15);
+}
+[data-layout="modern"] .deal-card-image {
+  width: 100%;
+  aspect-ratio: 4/3;
+  border-radius: 0;
+}
+[data-layout="modern"] .deal-card-content {
+  padding: 0.875rem;
+}
+[data-layout="modern"] .deal-card-title {
+  -webkit-line-clamp: 2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+[data-layout="modern"] .deal-card-description { display: none; }
+
+/* ══════════════════════════════════════ */
+/* LAYOUT: MYDEALZ — Deal list feed      */
+/* ══════════════════════════════════════ */
+[data-layout="mydealz"] .deal-card-image {
+  width: 11em;
+  height: 11em;
+  aspect-ratio: 1/1;
+  border-radius: var(--border-radius-sm);
+  margin: 0.75rem 0 0.75rem 0.75rem;
+}
+[data-layout="mydealz"] .deal-card-content {
+  padding: 0.75rem;
+  gap: 6px;
+}
+[data-layout="mydealz"] .deal-card-title {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+}
+[data-layout="mydealz"] .deal-card-price {
+  font-size: var(--font-size-xl);
+}
+[data-layout="mydealz"] .deal-card-description { display: block; }
+[data-layout="mydealz"] .deal-card-footer {
+  border-top: 1px solid color-mix(in srgb, var(--color-border) 40%, transparent);
+  padding-top: 8px;
+}
+/* MyDealz mobile: smaller image */
+@media (max-width: 640px) {
+  [data-layout="mydealz"] .deal-card-image {
+    width: 100px;
+    height: 100px;
+    margin: 0.5rem 0 0.5rem 0.5rem;
+  }
+  [data-layout="mydealz"] .deal-card-title { font-size: var(--font-size-base); }
+  [data-layout="mydealz"] .deal-card-price { font-size: var(--font-size-base); }
+  [data-layout="mydealz"] .deal-card-description { display: none; }
+}
+
+/* ══════════════════════════════════════ */
+/* LAYOUT: SHOPEE — Dense product grid   */
+/* ══════════════════════════════════════ */
+[data-layout="shopee"] .deal-card {
+  border-radius: 0.125rem;
+}
+[data-layout="shopee"] .deal-card:hover {
+  transform: translateY(-1px);
+  border-color: var(--color-primary);
+}
+[data-layout="shopee"] .deal-card-image {
+  width: 100%;
+  aspect-ratio: 1/1;
+}
+[data-layout="shopee"] .deal-card-content {
+  padding: 0.5rem;
+  gap: 4px;
+}
+[data-layout="shopee"] .deal-card-title {
+  font-size: var(--font-size-sm);
+  -webkit-line-clamp: 2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+[data-layout="shopee"] .deal-card-price {
+  font-size: var(--font-size-lg);
+  color: var(--color-primary);
+}
+[data-layout="shopee"] .deal-card-meta-top { display: none; }
+[data-layout="shopee"] .deal-card-meta-row { display: none; }
+[data-layout="shopee"] .deal-card-description { display: none; }
+[data-layout="shopee"] .deal-card-footer { display: none; }
+
+/* ══════════════════════════════════════ */
+/* LAYOUT: ALIEXPRESS — Clean white grid */
+/* ══════════════════════════════════════ */
+[data-layout="aliexpress"] .deal-card {
+  border: 1px solid transparent;
+  box-shadow: none;
+}
+[data-layout="aliexpress"] .deal-card:hover {
+  border-color: var(--color-border);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+[data-layout="aliexpress"] .deal-card-image {
+  width: 100%;
+  aspect-ratio: 1/1;
+}
+[data-layout="aliexpress"] .deal-card-content {
+  padding: 0.625rem;
+  gap: 4px;
+}
+[data-layout="aliexpress"] .deal-card-title {
+  font-size: var(--font-size-sm);
+  -webkit-line-clamp: 2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+[data-layout="aliexpress"] .deal-card-price {
+  font-size: var(--font-size-lg);
+  color: var(--color-danger);
+}
+[data-layout="aliexpress"] .deal-card-meta-top { flex-direction: column; align-items: flex-start; }
+[data-layout="aliexpress"] .deal-card-meta-row { display: none; }
+[data-layout="aliexpress"] .deal-card-description { display: none; }
+[data-layout="aliexpress"] .deal-card-footer { display: none; }
+
+/* ══════════════════════════════════════ */
+/* LAYOUT: AMAZON — Utilitarian grid     */
+/* ══════════════════════════════════════ */
+[data-layout="amazon"] .deal-card-image {
+  width: 100%;
+  aspect-ratio: 1/1;
+  padding: 0.75rem;
+  background: var(--color-bg);
+}
+[data-layout="amazon"] .deal-card-content {
+  padding: 0.625rem;
+  gap: 4px;
+}
+[data-layout="amazon"] .deal-card-title {
+  font-size: var(--font-size-sm);
+  -webkit-line-clamp: 2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: var(--color-text);
+}
+[data-layout="amazon"] .deal-card:hover .deal-card-title {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
+}
+[data-layout="amazon"] .deal-card-price {
+  font-size: var(--font-size-xl);
+  font-weight: 400;
+  color: var(--color-text);
+}
+[data-layout="amazon"] .deal-card-meta-top { display: none; }
+[data-layout="amazon"] .deal-card-description { display: none; }
+[data-layout="amazon"] .deal-card-footer { display: none; }
+
+/* ══════════════════════════════════════ */
+/* LAYOUT: MINIMALIST — Text density     */
+/* ══════════════════════════════════════ */
+[data-layout="minimalist"] .deal-card {
+  border-bottom: 1px solid var(--color-border);
+  border-radius: 0;
+  padding: 0.625rem 0;
+  gap: 0.75rem;
+}
+[data-layout="minimalist"] .deal-card:hover {
+  transform: none;
+  background: color-mix(in srgb, var(--color-primary) 5%, transparent);
+}
+[data-layout="minimalist"] .deal-card-image {
+  width: 4.5em;
+  height: 4.5em;
+  aspect-ratio: 1/1;
+  border-radius: var(--border-radius-sm);
+  flex-shrink: 0;
+}
+[data-layout="minimalist"] .deal-card-content {
+  padding: 0;
+  gap: 2px;
+}
+[data-layout="minimalist"] .deal-card-title {
+  font-size: var(--font-size-base);
+  font-weight: 500;
+}
+[data-layout="minimalist"] .deal-card-price {
+  font-size: var(--font-size-base);
+}
+[data-layout="minimalist"] .deal-card-description { display: none; }
+[data-layout="minimalist"] .deal-card-footer { display: none; }
+[data-layout="minimalist"] .deal-card-coupon { display: none; }
+[data-layout="minimalist"] .deal-card-meta-top {
+  justify-content: flex-start;
+  gap: 12px;
+}
+
+/* ══════════════════════════════════════ */
+/* SIDEBAR & CONTENT                     */
+/* ══════════════════════════════════════ */
+.site-sidebar {
+  width: var(--sidebar-width);
+  display: var(--sidebar-display);
+  flex-shrink: 0;
+}
+.site-content {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  width: 100%;
+}
+/* Hide sidebar on tablet and below */
+@media (max-width: 1024px) {
+  .site-sidebar { display: none !important; }
+}
+
+/* ══════════════════════════════════════ */
+/* TABLET REFINEMENTS (768-1024)         */
+/* ══════════════════════════════════════ */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .site-content { padding-left: 1rem; padding-right: 1rem; }
+}
+
+/* ══════════════════════════════════════ */
+/* PHONE REFINEMENTS (< 768)             */
+/* ══════════════════════════════════════ */
+@media (max-width: 768px) {
+  .site-content { padding-left: 0.5rem; padding-right: 0.5rem; }
+}

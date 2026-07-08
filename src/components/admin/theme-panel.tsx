@@ -4,38 +4,42 @@ import { useState, useTransition } from 'react'
 import { updateSiteConfig } from '@/server/actions/theme'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
-import { Card, CardContent } from '@/components/ui/card'
 import { toast } from 'sonner'
-import { Loader2, Palette, MonitorSmartphone, Type } from 'lucide-react'
+import { Loader2, Palette, MonitorSmartphone, Type, Wand2, Info } from 'lucide-react'
 
-const LAYOUTS = [
-  { id: 'modern', name: 'Modern', desc: 'Giao diện hiện đại, bo tròn' },
-  { id: 'minimalist', name: 'Minimalist', desc: 'Tối giản, gọn gàng' },
-  { id: 'mydealz', name: 'MyDealz', desc: 'Cổ điển, dạng danh sách' },
-  { id: 'aliexpress', name: 'AliExpress', desc: 'Lưới 4 cột, ảnh vuông' },
-  { id: 'shopee', name: 'Shopee', desc: 'Lưới 5 cột, mật độ cao' },
-]
+import { AVAILABLE_LAYOUTS, AVAILABLE_COLORS, COLORS as REGISTRY_COLORS } from '@/components/theme/registry'
 
-const SCALES = ['xs', 'sm', 'md', 'lg', 'xl']
+const LAYOUTS = AVAILABLE_LAYOUTS.map(id => ({
+  id,
+  name: id.charAt(0).toUpperCase() + id.slice(1).replace(/-/g, ' '),
+  desc: `Giao diện ${id}`,
+  icon: Wand2
+}))
 
-const COLORS = [
-  { id: 'default', name: 'Mặc định (Cam/Vàng)' },
-  { id: 'ocean', name: 'Đại dương (Xanh dương)' },
-  { id: 'forest', name: 'Rừng (Xanh lá)' },
-  { id: 'midnight', name: 'Đêm (Tối)' },
-  { id: 'tet', name: 'Tết (Đỏ/Vàng)' },
-  { id: 'rose', name: 'Hoa hồng (Hồng/Đỏ)' },
-]
+const SCALE_LABELS = ['XS', 'SM', 'MD', 'LG', 'XL']
+const SCALE_KEYS = ['xs', 'sm', 'md', 'lg', 'xl']
+
+const COLORS = AVAILABLE_COLORS.map(id => {
+  const scheme = REGISTRY_COLORS[id]
+  return {
+    id,
+    name: id.charAt(0).toUpperCase() + id.slice(1).replace(/-/g, ' '),
+    swatch: [scheme.light['--color-primary'], scheme.light['--color-accent'] || scheme.light['--color-secondary']]
+  }
+})
 
 export function ThemePanel({ initialConfig }: { initialConfig: any }) {
   const [config, setConfig] = useState(initialConfig || { layout: 'modern', scale: 'md', colorScheme: 'default', customCss: '' })
   const [isPending, startTransition] = useTransition()
+
+  const scaleIndex = SCALE_KEYS.indexOf(config.scale || 'md')
 
   const handleSave = () => {
     startTransition(async () => {
       try {
         await updateSiteConfig(config)
         toast.success('Đã cập nhật giao diện thành công!')
+        setTimeout(() => window.location.reload(), 500)
       } catch (err: any) {
         toast.error(err.message || 'Lỗi khi cập nhật giao diện')
       }
@@ -50,41 +54,57 @@ export function ThemePanel({ initialConfig }: { initialConfig: any }) {
           <MonitorSmartphone className="w-5 h-5 text-primary" />
           Bố cục (Layout)
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {LAYOUTS.map(layout => (
             <div 
               key={layout.id}
               onClick={() => setConfig({ ...config, layout: layout.id })}
               className={`p-4 rounded-lg cursor-pointer transition-all border-2 ${
                 config.layout === layout.id 
-                  ? 'border-primary bg-primary/5 shadow-md' 
-                  : 'border-transparent bg-muted/50 hover:bg-muted'
+                  ? 'border-primary bg-primary/10 shadow-lg ring-2 ring-primary/20' 
+                  : 'border-transparent bg-muted/50 hover:bg-muted hover:border-border'
               }`}
             >
-              <h3 className="font-semibold">{layout.name}</h3>
+              <div className="flex items-center gap-2 mb-1">
+                <layout.icon className="w-5 h-5 text-primary" />
+                <h3 className="font-semibold">{layout.name}</h3>
+              </div>
               <p className="text-sm text-muted-foreground">{layout.desc}</p>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Scale Selection */}
+      {/* Scale Slider */}
       <div className="glass-strong p-6 rounded-xl border border-border">
         <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
           <Type className="w-5 h-5 text-primary" />
           Kích thước (Scale)
         </h2>
-        <div className="flex flex-wrap gap-4">
-          {SCALES.map(scale => (
-            <Button
-              key={scale}
-              variant={config.scale === scale ? 'default' : 'outline'}
-              onClick={() => setConfig({ ...config, scale })}
-              className={`w-16 ${config.scale === scale ? 'ring-2 ring-primary ring-offset-2' : ''}`}
-            >
-              {scale.toUpperCase()}
-            </Button>
-          ))}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between text-sm text-muted-foreground">
+            <span>Nhỏ gọn</span>
+            <span className="font-bold text-lg text-foreground">{SCALE_LABELS[scaleIndex >= 0 ? scaleIndex : 2]}</span>
+            <span>Rộng rãi</span>
+          </div>
+          <input
+            type="range"
+            min={0}
+            max={4}
+            value={scaleIndex >= 0 ? scaleIndex : 2}
+            onChange={(e) => setConfig({ ...config, scale: SCALE_KEYS[parseInt(e.target.value)] })}
+            className="w-full h-2 rounded-full appearance-none cursor-pointer accent-[var(--color-primary,#FF4500)]"
+            style={{ background: `linear-gradient(to right, var(--color-primary) 0%, var(--color-primary) ${((scaleIndex >= 0 ? scaleIndex : 2) / 4) * 100}%, var(--color-border) ${((scaleIndex >= 0 ? scaleIndex : 2) / 4) * 100}%, var(--color-border) 100%)` }}
+          />
+          <div className="flex justify-between text-xs text-muted-foreground px-1">
+            {SCALE_LABELS.map((l, i) => (
+              <span key={l} className={scaleIndex === i ? 'text-primary font-bold' : ''}>{l}</span>
+            ))}
+          </div>
+          <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1.5">
+            <Info className="w-3.5 h-3.5" />
+            Kích thước lớn hơn = ít cột hơn trong bố cục lưới
+          </p>
         </div>
       </div>
 
@@ -94,19 +114,23 @@ export function ThemePanel({ initialConfig }: { initialConfig: any }) {
           <Palette className="w-5 h-5 text-primary" />
           Màu sắc (Color Scheme)
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
           {COLORS.map(color => (
             <div 
               key={color.id}
               onClick={() => setConfig({ ...config, colorScheme: color.id })}
-              className={`p-4 rounded-lg cursor-pointer transition-all border-2 flex items-center gap-3 ${
+              className={`p-3 rounded-lg cursor-pointer transition-all border-2 flex items-center gap-3 ${
                 config.colorScheme === color.id 
-                  ? 'border-primary bg-primary/5 shadow-md' 
-                  : 'border-transparent bg-muted/50 hover:bg-muted'
+                  ? 'border-primary bg-primary/10 shadow-lg ring-2 ring-primary/20' 
+                  : 'border-transparent bg-muted/50 hover:bg-muted hover:border-border'
               }`}
             >
-              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary to-secondary border border-border shadow-sm"></div>
-              <span className="font-medium text-sm">{color.name}</span>
+              <div className="flex -space-x-1 shrink-0">
+                {color.swatch.map((c, i) => (
+                  <div key={i} className="w-5 h-5 rounded-full border-2 border-background shadow-sm" style={{ background: c }} />
+                ))}
+              </div>
+              <span className="font-medium text-sm truncate">{color.name}</span>
             </div>
           ))}
         </div>

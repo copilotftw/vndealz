@@ -1,11 +1,12 @@
 import { db } from '@/lib/db'
-import { Link } from '@/i18n/navigation'
+import Link from 'next/link'
 import { CategoryTreeNav } from '../category/category-tree-nav'
 import { Button } from '../ui/button'
-import { PlusCircle } from 'lucide-react'
+import { Flame, LayoutGrid } from 'lucide-react'
 import Image from 'next/image'
 import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
+import { getTranslations } from 'next-intl/server'
 
 export async function requireMod() {
   const s = await auth.api.getSession({ headers: await headers() })
@@ -14,6 +15,8 @@ export async function requireMod() {
 }
 
 export async function Sidebar({ locale }: { locale: string }) {
+  const t = await getTranslations('nav')
+
   // Fetch top 5 hottest active deals for trending
   const trendingDeals = await db.deal.findMany({
     where: { status: 'ACTIVE' },
@@ -24,19 +27,11 @@ export async function Sidebar({ locale }: { locale: string }) {
 
   return (
     <div className="space-y-[var(--section-gap)] sticky top-[calc(var(--nav-height)+var(--section-gap))] w-[var(--sidebar-width)] flex-shrink-0">
-      
-      {/* Đăng deal CTA */}
-      <Link href="/dang-deal" className="block">
-        <Button className="w-full bg-[var(--color-primary)] text-white hover:opacity-90 h-12 text-[length:var(--font-size-base)] shadow-lg hover:shadow-xl transition-all">
-          <PlusCircle className="mr-2 h-5 w-5" />
-          {locale === 'vi' ? 'Đăng deal mới' : 'Submit Deal'}
-        </Button>
-      </Link>
 
       {/* Trending deals */}
       <section className="glass-subtle rounded-[var(--border-radius-lg)] p-[var(--card-padding)] shadow-sm">
         <h3 className="text-[length:var(--font-size-lg)] font-bold mb-4 text-[var(--color-hot)] flex items-center gap-2">
-          🔥 {locale === 'vi' ? 'Nóng nhất' : 'Trending'}
+          <Flame className="w-5 h-5" /> {t('trending')}
         </h3>
         <div className="space-y-4">
           {trendingDeals.map(deal => (
@@ -56,7 +51,7 @@ export async function Sidebar({ locale }: { locale: string }) {
                 </p>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-[length:var(--font-size-xs)] font-bold text-[var(--color-hot)]">{deal.temperature}°</span>
-                  <span className="text-[length:var(--font-size-xs)] text-[var(--color-text-muted)] line-clamp-1">{deal.category.nameVi}</span>
+                  <span className="text-[length:var(--font-size-xs)] text-[var(--color-text-muted)] line-clamp-1">{locale === 'vi' ? deal.category.nameVi : deal.category.nameEn}</span>
                 </div>
               </div>
             </Link>
@@ -67,7 +62,7 @@ export async function Sidebar({ locale }: { locale: string }) {
       {/* Category navigation */}
       <section className="glass-subtle rounded-[var(--border-radius-lg)] p-[var(--card-padding)] shadow-sm">
         <h3 className="text-[length:var(--font-size-lg)] font-bold mb-4 flex items-center gap-2">
-          📂 {locale === 'vi' ? 'Danh mục' : 'Categories'}
+          <LayoutGrid className="w-5 h-5" /> {t('categories')}
         </h3>
         <CategoryTreeNav locale={locale} />
       </section>

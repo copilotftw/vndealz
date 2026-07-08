@@ -1,4 +1,4 @@
-import { Link } from '@/i18n/navigation'
+import Link from 'next/link'
 import { LayoutDashboard, Shield, Tag, Users, FolderTree, Flag, Palette, Link2, Megaphone } from 'lucide-react'
 import { db } from '@/lib/db'
 
@@ -19,10 +19,9 @@ export async function AdminSidebar() {
   ]
 
   return (
-    <aside className="w-60 glass-subtle border-r border-[var(--color-border)] min-h-screen p-4 flex flex-col">
-      <h2 className="text-[length:var(--font-size-xl)] font-bold mb-6 text-[var(--color-primary)] px-2">VNDealz Admin</h2>
+    <aside className="w-full md:w-60 glass-subtle h-full overflow-y-auto p-4 flex md:flex-col gap-2 md:gap-0">
       
-      <nav className="space-y-1.5 flex-1">
+      <nav className="flex flex-row md:flex-col gap-1.5 md:space-y-1.5 flex-1 overflow-x-auto md:overflow-x-visible pb-2 md:pb-0 no-scrollbar">
         {links.map((link) => (
           <Link
             key={link.href}

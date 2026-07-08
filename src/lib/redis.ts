@@ -42,7 +42,7 @@ export async function getCached<T>(key: string): Promise<T | null> {
     if (!data) return null
     return JSON.parse(data) as T
   } catch (error) {
-    console.error(`Redis Get Error [${key}]:`, error)
+    // Suspend error when cache not found/offline
     return null
   }
 }
@@ -52,7 +52,7 @@ export async function setCached<T>(key: string, data: T, expireSeconds: number =
   try {
     await redis.set(key, JSON.stringify(data), 'EX', expireSeconds)
   } catch (error) {
-    console.error(`Redis Set Error [${key}]:`, error)
+    // Suspend error
   }
 }
 
@@ -64,6 +64,6 @@ export async function invalidateCache(pattern: string) {
       await redis.del(...keys)
     }
   } catch (error) {
-    console.error(`Redis Invalidate Error [${pattern}]:`, error)
+    // Suspend error
   }
 }

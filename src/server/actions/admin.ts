@@ -41,7 +41,7 @@ import { sendEmail } from '@/lib/email'
 import { render } from 'react-email'
 import DealApprovedEmail from '@/emails/deal-approved'
 import DealRejectedEmail from '@/emails/deal-rejected'
-import DealAlertEmail from '@/emails/deal-alert'
+import { matchDealWithAlerts } from '@/lib/alerts/matching-engine'
 
 export async function moderateDeal(dealId: string, action: 'approve' | 'reject', reason?: string) {
   const s = await requireAdmin()
@@ -79,33 +79,8 @@ export async function moderateDeal(dealId: string, action: 'approve' | 'reject',
 
   // Check DealAlerts for matches if approved
   if (action === 'approve') {
-    const alerts = await db.dealAlert.findMany({
-      where: {
-        active: true,
-        OR: [
-          { keyword: { contains: deal.title } },
-          { categoryId: deal.categoryId },
-          // Note: Full keyword matching can be more complex, keeping it simple
-        ]
-      },
-      include: { user: true }
-    })
-    
-    // Filter out the deal creator and send emails
-    for (const alert of alerts) {
-      if (alert.userId === deal.userId) continue
-      if (!alert.user.email) continue
-      
-      const html = await render(DealAlertEmail({
-        keyword: alert.keyword || deal.title,
-        dealTitle: deal.title,
-        dealUrl: `${process.env.BETTER_AUTH_URL}/deal/${deal.slug}`,
-        price: Number(deal.price),
-        userName: alert.user.name || 'User'
-      }))
-      
-      await sendEmail({ to: alert.user.email, subject: `New Deal Alert: ${deal.title}`, html })
-    }
+    // Fire and forget matching engine (ponytail approach)
+    matchDealWithAlerts(deal.id).catch(console.error)
   }
   
   revalidatePath('/[locale]/admin/moderation')
@@ -116,7 +91,7 @@ export async function moderateDeal(dealId: string, action: 'approve' | 'reject',
 export async function getPendingDeals() {
   await requireAdmin()
   
-  return await db.deal.findMany({
+  const deals = await db.deal.findMany({
     where: { status: 'PENDING' },
     include: {
       user: { select: { id: true, name: true, avatar: true } },
@@ -124,6 +99,12 @@ export async function getPendingDeals() {
     },
     orderBy: { createdAt: 'desc' }
   })
+  
+  return deals.map(d => ({
+    ...d,
+    price: d.price ? Number(d.price) : null,
+    comparePrice: d.comparePrice ? Number(d.comparePrice) : null,
+  }))
 }
 
 export async function banUser(userId: string) {

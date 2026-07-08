@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { useRouter } from '@/i18n/navigation'
-import { useLocale } from 'next-intl'
+import { useRouter } from 'next/navigation'
+import { useLocale, useTranslations } from 'next-intl'
 import { createDeal } from '@/server/actions/deal'
 import { toast } from 'sonner'
 import { Input } from '@/components/ui/input'
@@ -15,7 +15,7 @@ import { Loader2 } from 'lucide-react'
 export function DealForm({ categories }: { categories: any[] }) {
   const router = useRouter()
   const locale = useLocale()
-  const isVi = locale === 'vi'
+  const t = useTranslations('deal')
   const [isPending, startTransition] = useTransition()
   
   // Flatten tree for select
@@ -35,7 +35,7 @@ export function DealForm({ categories }: { categories: any[] }) {
     startTransition(async () => {
       try {
         await createDeal(formData)
-        toast.success(isVi ? 'Deal đã được gửi và đang chờ duyệt!' : 'Deal submitted for moderation!')
+        toast.success(t('submitSuccess'))
         router.push('/')
       } catch (err: any) {
         toast.error(err.message || 'Error submitting deal')
@@ -52,50 +52,50 @@ export function DealForm({ categories }: { categories: any[] }) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="title">{isVi ? 'Tiêu đề' : 'Title'} *</Label>
+        <Label htmlFor="title">{t('title')} *</Label>
         <Input id="title" name="title" required minLength={5} maxLength={200} className="bg-white/50" />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="price">{isVi ? 'Giá (VNĐ)' : 'Price'}</Label>
+          <Label htmlFor="price">{t('price')} (VNĐ)</Label>
           <Input id="price" name="price" type="number" min="0" className="bg-white/50" />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="comparePrice">{isVi ? 'Giá gốc' : 'Compare Price'}</Label>
+          <Label htmlFor="comparePrice">{t('comparePrice')}</Label>
           <Input id="comparePrice" name="comparePrice" type="number" min="0" className="bg-white/50" />
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="couponCode">{isVi ? 'Mã giảm giá' : 'Coupon Code'}</Label>
+          <Label htmlFor="couponCode">{t('couponCode')}</Label>
           <Input id="couponCode" name="couponCode" className="bg-white/50" />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="merchant">{isVi ? 'Cửa hàng (VD: Shopee)' : 'Merchant'}</Label>
+          <Label htmlFor="merchant">{t('merchant')}</Label>
           <Input id="merchant" name="merchant" className="bg-white/50" />
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="categoryId">{isVi ? 'Danh mục' : 'Category'} *</Label>
+          <Label htmlFor="categoryId">{t('category')} *</Label>
           <Select name="categoryId" required>
             <SelectTrigger className="bg-white/50">
-              <SelectValue placeholder={isVi ? 'Chọn danh mục' : 'Select category'} />
+              <SelectValue placeholder={t('selectCategory')} />
             </SelectTrigger>
             <SelectContent>
               {flatCats.map(cat => (
                 <SelectItem key={cat.id} value={cat.id}>
-                  {'—'.repeat(cat.depth)} {isVi ? cat.nameVi : cat.nameEn}
+                  {'—'.repeat(cat.depth)} {locale === 'vi' ? cat.nameVi : cat.nameEn}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="type">{isVi ? 'Loại' : 'Type'} *</Label>
+          <Label htmlFor="type">{t('type')} *</Label>
           <Select name="type" defaultValue="DEAL" required>
             <SelectTrigger className="bg-white/50">
               <SelectValue />
@@ -104,19 +104,19 @@ export function DealForm({ categories }: { categories: any[] }) {
               <SelectItem value="DEAL">Deal</SelectItem>
               <SelectItem value="VOUCHER">Voucher</SelectItem>
               <SelectItem value="FREEBIE">Freebie</SelectItem>
-              <SelectItem value="DISCUSSION">{isVi ? 'Thảo luận' : 'Discussion'}</SelectItem>
+              <SelectItem value="DISCUSSION">{t('discussion')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="image">{isVi ? 'Ảnh URL' : 'Image URL'}</Label>
+        <Label htmlFor="image">{t('imageUrl')}</Label>
         <Input id="image" name="image" type="url" className="bg-white/50" placeholder="https://..." />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="description">{isVi ? 'Mô tả chi tiết' : 'Description'} *</Label>
+        <Label htmlFor="description">{t('description')} *</Label>
         <Textarea 
           id="description" 
           name="description" 
@@ -124,12 +124,12 @@ export function DealForm({ categories }: { categories: any[] }) {
           minLength={10} 
           rows={6}
           className="bg-white/50 resize-y"
-          placeholder={isVi ? 'Nhập chi tiết về khuyến mãi này...' : 'Enter details...'}
+          placeholder={t('enterDetails')}
         />
       </div>
 
       <Button type="submit" disabled={isPending} className="w-full bg-[var(--color-primary)] text-white hover:opacity-90 h-12 text-lg">
-        {isPending ? <Loader2 className="w-6 h-6 animate-spin" /> : (isVi ? 'Đăng Deal' : 'Submit Deal')}
+        {isPending ? <Loader2 className="w-6 h-6 animate-spin" /> : t('submitDeal')}
       </Button>
     </form>
   )

@@ -41,6 +41,11 @@ export async function searchDeals(query: string, page = 1, limit = 20) {
       }
     })
   ])
-  
-  return { deals, total, pages: Math.ceil(total / limit) }
+  const serializedDeals = deals.map(d => ({
+    ...d,
+    price: d.price ? Number(d.price) : null,
+    comparePrice: d.comparePrice ? Number(d.comparePrice) : null,
+  }))
+
+  return { deals: serializedDeals, total, pages: Math.ceil(total / limit) }
 }

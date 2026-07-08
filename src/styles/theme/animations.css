@@ -1,0 +1,53 @@
+/* ══════════════════════════════════════ */
+/* ANIMATIONS                            */
+/* ══════════════════════════════════════ */
+.page-enter {
+  animation: pageSlideIn 0.35s cubic-bezier(0.4,0,0.2,1) both;
+}
+@keyframes pageSlideIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.sidebar-enter {
+  animation: sidebarSlide 0.3s cubic-bezier(0.4,0,0.2,1) both;
+}
+@keyframes sidebarSlide {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.deal-card-enter {
+  animation: dealCardFadeIn 0.4s cubic-bezier(0.4,0,0.2,1) both;
+}
+@keyframes dealCardFadeIn {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Temperature glow */
+.temp-hot { color: var(--color-hot); transition: text-shadow 0.3s ease; }
+.temp-hot[data-temp-high="true"] {
+  text-shadow: 0 0 12px var(--color-hot), 0 0 24px rgba(255,69,0,0.3);
+}
+.temp-cold { color: var(--color-cold); }
+
+/* Dialog overlay */
+.dialog-overlay {
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(4px);
+}
+
+/* Smooth transitions */
+button, a, [role="button"] {
+  transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* Toast */
+.toast-enter {
+  animation: toastSlide 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes toastSlide {
+  from { opacity: 0; transform: translateX(100%) scale(0.9); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}

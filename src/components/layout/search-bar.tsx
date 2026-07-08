@@ -1,14 +1,17 @@
 'use client'
 
 import { Search } from 'lucide-react'
-import { useRouter } from '@/i18n/navigation'
+import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 
-export function SearchBar() {
+export function SearchBar({ mobile }: { mobile?: boolean }) {
   const router = useRouter()
   const [query, setQuery] = useState('')
+  const t = useTranslations('nav')
 
   useEffect(() => {
+    if (mobile) return // no keyboard shortcut for mobile variant
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault()
@@ -17,7 +20,7 @@ export function SearchBar() {
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [])
+  }, [mobile])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -27,18 +30,19 @@ export function SearchBar() {
   }
 
   return (
-    <form 
+    <form
       onSubmit={handleSubmit}
-      className="relative hidden md:flex items-center flex-1 max-w-md mx-4"
+      className="relative flex items-center w-full flex-1"
     >
       <Search className="absolute left-3 w-4 h-4 text-[var(--color-text-muted)]" />
       <input
-        id="site-search"
+        id={mobile ? 'site-search-mobile' : 'site-search'}
         type="search"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Tìm kiếm deal, mã giảm giá... (Cmd+K)"
-        className="w-full h-[var(--button-height)] pl-10 pr-4 rounded-[var(--border-radius-full)] bg-[var(--color-surface)]/50 border border-[var(--color-border)]/50 focus:border-[var(--color-primary)] outline-none text-[length:var(--font-size-sm)] transition-all placeholder:text-[var(--color-text-muted)] glass-subtle"
+        placeholder={mobile ? t('searchMobile') : t('search')}
+        autoFocus={mobile}
+        className="w-full h-[var(--button-height)] pl-10 pr-4 rounded-full bg-[var(--color-bg)]/60 border border-[var(--color-border)]/50 focus:border-[var(--color-primary)] outline-none text-[length:var(--font-size-sm)] text-[var(--color-text)] transition-all placeholder:text-[var(--color-text-muted)]/60"
       />
     </form>
   )

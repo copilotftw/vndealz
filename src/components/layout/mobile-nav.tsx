@@ -1,26 +1,26 @@
 'use client'
 
-import { Link, usePathname } from '@/i18n/navigation'
-import { useLocale } from 'next-intl'
-import { Home, Tag, PlusCircle, Bell, User } from 'lucide-react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { useTranslations } from 'next-intl'
+import { Home, Tag, PlusCircle, Bell, User, AlarmClock } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
 
 export function MobileNav() {
   const pathname = usePathname()
-  const locale = useLocale()
+  const t = useTranslations('nav')
   const { user } = useAuth()
-  const isVi = locale === 'vi'
 
   const navItems = [
-    { href: '/', icon: Home, label: isVi ? 'Trang chủ' : 'Home' },
-    { href: '/danh-muc', icon: Tag, label: isVi ? 'Danh mục' : 'Categories' },
-    { href: '/dang-deal', icon: PlusCircle, label: isVi ? 'Đăng deal' : 'Submit', special: true },
-    { href: '/thong-bao', icon: Bell, label: isVi ? 'Thông báo' : 'Alerts' },
-    { href: user ? `/ho-so/${user.name}` : '/dang-nhap', icon: User, label: user ? (isVi ? 'Hồ sơ' : 'Profile') : (isVi ? 'Đăng nhập' : 'Login') },
+    { href: '/', icon: Home, label: t('home') },
+    { href: '/deal-alarm', icon: AlarmClock, label: t('alarms') },
+    { href: '/dang-deal', icon: PlusCircle, label: t('submit'), special: true },
+    { href: '/thong-bao', icon: Bell, label: t('alerts') },
+    { href: user ? `/ho-so/${user.name}` : '/dang-nhap', icon: User, label: user ? t('profile') : t('login') },
   ]
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 glass-strong z-50 lg:hidden flex items-center justify-around h-16 border-t border-[var(--color-border)] px-2 pb-safe">
+    <nav className="fixed bottom-0 left-0 right-0 glass-strong z-50 md:hidden flex items-center justify-around h-16 border-t border-[var(--color-border)] px-2 pb-safe">
       {navItems.map((item) => {
         const isActive = pathname === item.href
         const Icon = item.icon

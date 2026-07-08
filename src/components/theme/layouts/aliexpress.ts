@@ -1,0 +1,35 @@
+export const aliexpress = {
+  
+    '--layout-name': 'aliexpress',
+    '--card-border-radius': '0.75rem',
+    '--card-shadow': '0 1px 4px rgba(0,0,0,0.04)',
+    '--card-shadow-hover': '0 6px 24px rgba(0,0,0,0.1)',
+    '--card-border': '1px solid var(--color-border)',
+    '--card-bg': 'var(--color-surface)',
+    '--card-bg-dark': 'var(--color-surface)',
+    '--card-direction': 'column',
+    '--card-image-width': '100%',
+    '--card-image-height': 'auto',
+    '--card-image-ratio': '1/1',
+    '--card-padding': '0',
+    '--grid-columns-base': '4', // scale adjusts: xs→5, xl→2
+    '--nav-style': 'sticky',
+    '--nav-blur': 'none',
+    '--nav-bg': 'var(--color-nav-bg)',
+    '--nav-bg-dark': 'var(--color-nav-bg)',
+    '--nav-border': '1px solid var(--color-nav-border)',
+    '--sidebar-width': '0px',
+    '--sidebar-display': 'none',
+    '--border-radius-sm': '0.5rem',
+    '--border-radius-md': '0.75rem',
+    '--border-radius-lg': '1rem',
+    '--border-radius-xl': '1.25rem',
+    '--content-max-width': '1400px',
+    '--glass-bg': 'rgba(255,255,255,0.7)',
+    '--glass-bg-dark': 'rgba(25,25,25,0.7)',
+    '--glass-blur': 'blur(12px) saturate(150%)',
+    '--glass-border': '1px solid rgba(255,255,255,0.15)',
+    '--glass-border-dark': '1px solid rgba(255,255,255,0.06)',
+  } as const;
+
+export default aliexpress;

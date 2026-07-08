@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import { ChevronDown, ChevronRight } from 'lucide-react'
-import { Link } from '@/i18n/navigation'
+import Link from 'next/link'
+import { DynamicIcon } from '@/components/ui/dynamic-icon'
 
 type CatNode = {
   id: string
@@ -44,7 +45,11 @@ export function CategoryTreeNode({
               style={{ paddingLeft: `${depth * 1 + 0.5}rem` }}
             >
               <div className="flex items-center gap-2 overflow-hidden">
-                {node.icon && <span className="text-[var(--color-text-muted)] group-hover:text-[var(--color-primary)]">{node.icon}</span>}
+                {node.icon && (
+                  <span className="text-[var(--color-text-muted)] group-hover:text-[var(--color-primary)]">
+                    <DynamicIcon name={node.icon} className="w-4 h-4" />
+                  </span>
+                )}
                 <span className="text-[length:var(--font-size-sm)] text-[var(--color-text)] truncate">
                   {locale === 'vi' ? node.nameVi : node.nameEn}
                 </span>

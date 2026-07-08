@@ -1,4 +1,4 @@
-import { Link } from '@/i18n/navigation'
+import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
 
 export function CategoryBreadcrumb({ path, locale }: { path: { nameVi: string; nameEn: string; slug: string }[]; locale: string }) {

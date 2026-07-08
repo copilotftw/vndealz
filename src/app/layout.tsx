@@ -3,12 +3,15 @@ import { Inter, Geist } from 'next/font/google'
 import './globals.css'
 import { getThemeStyles } from '@/components/theme/theme-provider'
 import { cn } from "@/lib/utils";
+import { Toaster } from 'sonner'
+import { ThemeProvider } from '@/components/theme/theme-provider-client'
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const inter = Inter({ subsets: ['latin', 'vietnamese'] })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.BETTER_AUTH_URL || 'http://localhost:3000'),
   title: {
     default: 'VNDealz — Cộng đồng săn deal #1 Việt Nam',
     template: '%s | VNDealz'
@@ -50,17 +53,20 @@ export const metadata: Metadata = {
   },
 }
 
-import { ThemeProvider } from '@/components/theme/theme-provider-client'
+import { NextIntlClientProvider } from 'next-intl'
+import { getMessages, getLocale } from 'next-intl/server'
 
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const themeCSS = await getThemeStyles()
+  const { css: themeCSS, layout: activeLayout } = await getThemeStyles()
+  const locale = await getLocale()
+  const messages = await getMessages()
 
   return (
-    <html lang="vi" className={cn(inter.className, "font-sans", geist.variable)} suppressHydrationWarning>
+    <html lang={locale} className={cn(inter.className, "font-sans", geist.variable)} data-layout={activeLayout} suppressHydrationWarning>
       <head>
         {/* Theme CSS injected from DB config — no rebuild needed */}
         <style dangerouslySetInnerHTML={{ __html: themeCSS }} />
@@ -72,9 +78,12 @@ export default async function RootLayout({
           fontSize: 'var(--font-size-base)',
         }}
       >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          {children}
-        </ThemeProvider>
+        <NextIntlClientProvider messages={messages}>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+            {children}
+            <Toaster position="bottom-right" richColors />
+          </ThemeProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   )

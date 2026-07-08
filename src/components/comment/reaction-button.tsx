@@ -5,7 +5,7 @@ import { reactToComment } from '@/server/actions/comment'
 import { ThumbsUp } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
 import { toast } from 'sonner'
-import { useRouter } from '@/i18n/navigation'
+import { useRouter } from 'next/navigation'
 
 export function ReactionButton({ commentId, initialCount }: { commentId: string; initialCount: number }) {
   const [count, setCount] = useState(initialCount)

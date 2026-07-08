@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Plus, GripVertical, Trash2, Edit2, ChevronRight, ChevronDown } from 'lucide-react'
 
+import { DynamicIcon } from '@/components/ui/dynamic-icon'
+
 // A simplified category manager without actual dnd-kit logic for now to prevent bugs
 export function CategoryTreeManager({ initialTree }: { initialTree: any[] }) {
   const [tree, setTree] = useState(initialTree)
@@ -33,7 +35,9 @@ export function CategoryTreeManager({ initialTree }: { initialTree: any[] }) {
             {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
           </button>
           
-          <span className="text-xl w-6 text-center">{node.icon}</span>
+          <div className="w-6 flex justify-center text-muted-foreground">
+            <DynamicIcon name={node.icon} className="w-5 h-5" />
+          </div>
           
           <div className="flex flex-col flex-1">
             <span className="font-medium text-sm text-[var(--color-text)]">{node.nameVi}</span>

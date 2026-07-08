@@ -1,6 +1,11 @@
 import { getDeals } from '@/server/actions/deal'
 import { DealList } from './deal-list'
-import { Link } from '@/i18n/navigation'
+import Link from 'next/link'
+import { auth } from '@/lib/auth'
+import { headers } from 'next/headers'
+import { db } from '@/lib/db'
+
+import { getTranslations } from 'next-intl/server'
 
 export async function DealFeed({ 
   searchParams, 
@@ -23,13 +28,21 @@ export async function DealFeed({
     page,
   })
 
-  const isVi = locale === 'vi'
+  // Get current user session
+  const session = await auth.api.getSession({ headers: await headers() })
+  let userVotes: Record<string, number> = {}
 
-  const tabs = [
-    { id: 'hot', label: isVi ? 'Hot nhất' : 'Hottest' },
-    { id: 'new', label: isVi ? 'Mới nhất' : 'Newest' },
-    { id: 'trending', label: isVi ? 'Đang nổi' : 'Trending' },
-  ]
+  if (session?.user && deals.length > 0) {
+    const dealIds = deals.map(d => d.id)
+    const votes = await db.vote.findMany({
+      where: { userId: session.user.id, dealId: { in: dealIds } }
+    })
+    votes.forEach(v => {
+      userVotes[v.dealId] = v.value
+    })
+  }
+
+  const t = await getTranslations('common')
 
   // Construct base url for pagination
   const params = new URLSearchParams()
@@ -37,23 +50,9 @@ export async function DealFeed({
 
   return (
     <div className="space-y-[var(--section-gap)]">
-      <div className="flex gap-2 bg-[var(--color-surface)] p-1 rounded-[var(--border-radius-lg)] glass-subtle border border-[var(--color-border)]/50 w-fit mb-6">
-        {tabs.map((tab) => (
-          <Link
-            key={tab.id}
-            href={`?sort=${tab.id}`}
-            className={`px-4 py-2 rounded-[var(--border-radius-md)] text-[length:var(--font-size-sm)] font-medium transition-all ${
-              sort === tab.id
-                ? 'bg-[var(--color-primary)] text-white shadow-md'
-                : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface)]'
-            }`}
-          >
-            {tab.label}
-          </Link>
-        ))}
-      </div>
+      {/* ponytail: tabs moved to navbar row 3 via HeaderContext */}
 
-      <DealList deals={deals as any} locale={locale} />
+      <DealList deals={deals as any} locale={locale} userVotes={userVotes} />
 
       {pages > 1 && (
         <div className="flex justify-center gap-2 mt-8">
@@ -62,18 +61,18 @@ export async function DealFeed({
               href={`?sort=${sort}&page=${page - 1}`}
               className="px-4 py-2 border border-[var(--color-border)] rounded-[var(--border-radius-md)] hover:bg-[var(--color-primary)]/10 transition-colors bg-[var(--color-surface)]/50"
             >
-              {isVi ? 'Trước' : 'Prev'}
+              {t('previous')}
             </Link>
           )}
           <span className="px-4 py-2 text-[var(--color-text-muted)]">
-            {isVi ? 'Trang' : 'Page'} {page} / {pages}
+            {t('page')} {page} / {pages}
           </span>
           {page < pages && (
             <Link 
               href={`?sort=${sort}&page=${page + 1}`}
               className="px-4 py-2 border border-[var(--color-border)] rounded-[var(--border-radius-md)] hover:bg-[var(--color-primary)]/10 transition-colors bg-[var(--color-surface)]/50"
             >
-              {isVi ? 'Tiếp' : 'Next'}
+              {t('next')}
             </Link>
           )}
         </div>

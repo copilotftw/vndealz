@@ -2,6 +2,12 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+/* Modular theme CSS */
+@import "../styles/theme/layout.css";
+@import "../styles/theme/components.css";
+@import "../styles/theme/navbar.css";
+@import "../styles/theme/animations.css";
+
 @custom-variant dark (&:is(.dark *));
 
 /* ══════════════════════════════════════════════════════
@@ -77,7 +83,10 @@
   --color-chart-1: var(--chart-1);
   --color-ring: var(--ring);
   --color-input: var(--input);
-  --color-border: var(--border);
+  /* ponytail: these vars are set by the theme system on :root via dynamic <style> tag.
+     Point Tailwind utilities to the theme system values, NOT to shadcn's oklch defaults.
+     --color-border, --color-primary etc are controlled by COLOR_SCHEMES in theme-tokens.ts */
+  --color-border: var(--color-border);
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
@@ -86,13 +95,13 @@
   --color-secondary-foreground: var(--secondary-foreground);
   --color-secondary: var(--secondary);
   --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
+  --color-primary: var(--color-primary);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
   --color-foreground: var(--foreground);
-  --color-background: var(--background);
+  --color-background: var(--color-bg);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);

@@ -13,8 +13,12 @@ const adapter = new PrismaMariaDb({
 
 const prisma = new PrismaClient({ adapter })
 
+import { hashPassword } from 'better-auth/crypto'
+
 async function main() {
   console.log('Seeding data...')
+  
+  const defaultPassword = await hashPassword('1234567')
 
   // Create or get default admin user
   const admin = await prisma.user.upsert({
@@ -29,21 +33,47 @@ async function main() {
     }
   })
 
+  // Ensure admin account exists for login
+  await prisma.account.upsert({
+    where: { providerId_accountId: { providerId: 'credential', accountId: admin.email } },
+    update: { password: defaultPassword },
+    create: {
+      userId: admin.id,
+      accountId: admin.email,
+      providerId: 'credential',
+      password: defaultPassword
+    }
+  })
+
   // Create some users
   const users = await Promise.all(
-    Array.from({ length: 5 }).map((_, i) =>
-      prisma.user.upsert({
-        where: { email: `user${i}@example.com` },
+    Array.from({ length: 5 }).map(async (_, i) => {
+      const email = `user${i}@example.com`
+      const user = await prisma.user.upsert({
+        where: { email },
         update: {},
         create: {
-          email: `user${i}@example.com`,
+          email,
           name: faker.person.fullName(),
           username: faker.internet.username().toLowerCase().replace(/[^a-z0-9]/g, ''),
           role: 'USER',
           emailVerified: true
         }
       })
-    )
+      
+      await prisma.account.upsert({
+        where: { providerId_accountId: { providerId: 'credential', accountId: email } },
+        update: { password: defaultPassword },
+        create: {
+          userId: user.id,
+          accountId: email,
+          providerId: 'credential',
+          password: defaultPassword
+        }
+      })
+      
+      return user
+    })
   )
 
   // Create a base category if none exists
@@ -54,7 +84,7 @@ async function main() {
         nameVi: 'Công nghệ',
         nameEn: 'Technology',
         slug: 'cong-nghe',
-        icon: '💻'
+        icon: 'Laptop'
       }
     })
   }

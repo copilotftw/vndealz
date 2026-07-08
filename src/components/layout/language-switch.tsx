@@ -1,30 +1,31 @@
 'use client'
 
-import { usePathname, useRouter } from '@/i18n/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
 import { useLocale } from 'next-intl'
-import { useTransition } from 'react'
+import { Globe } from 'lucide-react'
 
 export function LanguageSwitch() {
+  const locale = useLocale()
   const router = useRouter()
   const pathname = usePathname()
-  const locale = useLocale()
-  const [isPending, startTransition] = useTransition()
 
-  const onToggle = () => {
+  const toggleLocale = () => {
     const nextLocale = locale === 'vi' ? 'en' : 'vi'
-    startTransition(() => {
-      router.replace(pathname, { locale: nextLocale })
-    })
+    document.cookie = `NEXT_LOCALE=${nextLocale}; path=/; max-age=31536000; SameSite=Lax`
+    router.refresh()
   }
 
   return (
-    <button 
-      onClick={onToggle}
-      disabled={isPending}
-      className="px-2 py-1 rounded-[var(--border-radius-sm)] hover:bg-[var(--color-primary)]/10 text-[length:var(--font-size-lg)] transition-colors opacity-80 hover:opacity-100 disabled:opacity-50"
-      title={locale === 'vi' ? 'Switch to English' : 'Đổi sang tiếng Việt'}
+    <Button 
+      variant="ghost" 
+      size="sm" 
+      onClick={toggleLocale}
+      className="nav-icon-btn rounded-full gap-2 px-3 font-semibold"
+      title={locale === 'vi' ? 'Switch to English' : 'Đổi sang Tiếng Việt'}
     >
-      {locale === 'vi' ? '🇬🇧' : '🇻🇳'}
-    </button>
+      <Globe className="w-4 h-4 opacity-70" />
+      <span>{locale === 'vi' ? 'EN' : 'VI'}</span>
+    </Button>
   )
 }

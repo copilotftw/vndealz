@@ -8,6 +8,8 @@ import { generateSlug } from '@/lib/utils'
 import { calculateTemperature } from '@/lib/temperature'
 import { revalidatePath } from 'next/cache'
 import { getCategoryWithDescendants } from './category'
+import { matchDealWithAlerts } from '@/lib/alerts/matching-engine'
+import { evaluateGamification } from '@/lib/gamification/engine'
 
 async function getSession() {
   const s = await auth.api.getSession({ headers: await headers() })
@@ -50,18 +52,33 @@ export async function createDeal(formData: FormData) {
 
   await invalidateCache('deals:*')
   revalidatePath('/[locale]/admin/moderation')
+  
+  // Ponytail: fire and forget gamification check
+  evaluateGamification(s.user.id).catch(console.error)
+  
   return deal
 }
 
 export async function voteDeal(dealId: string, value: 1 | -1) {
   const s = await getSession()
   
-  // Upsert vote
-  await db.vote.upsert({
-    where: { userId_dealId: { userId: s.user.id, dealId } },
-    update: { value },
-    create: { userId: s.user.id, dealId, value }
+  const existingVote = await db.vote.findUnique({
+    where: { userId_dealId: { userId: s.user.id, dealId } }
   })
+
+  if (existingVote && existingVote.value === value) {
+    // Toggle off
+    await db.vote.delete({
+      where: { userId_dealId: { userId: s.user.id, dealId } }
+    })
+  } else {
+    // Upsert vote
+    await db.vote.upsert({
+      where: { userId_dealId: { userId: s.user.id, dealId } },
+      update: { value },
+      create: { userId: s.user.id, dealId, value }
+    })
+  }
 
   // Recalculate temp
   const votes = await db.vote.findMany({ where: { dealId } })
@@ -71,13 +88,18 @@ export async function voteDeal(dealId: string, value: 1 | -1) {
     const temp = calculateTemperature(votes)
     await db.deal.update({ where: { id: dealId }, data: { temperature: temp } })
     
-    // award points if > 100
     if (temp >= 100) {
       await db.user.update({
         where: { id: deal.userId },
         data: { points: { increment: 10 } }
       })
     }
+    
+    // Check if new temperature triggers any alerts
+    matchDealWithAlerts(dealId).catch(console.error)
+    
+    // Evaluate Gamification for the deal creator
+    evaluateGamification(deal.userId).catch(console.error)
   }
   await invalidateCache('deals:*')
   revalidatePath('/[locale]/deal/[slug]')
@@ -110,26 +132,68 @@ export async function getDeals(opts: {
     if (catIds.length) where.categoryId = { in: catIds }
   }
 
-  let orderBy: any = { temperature: 'desc' }
-  if (opts.sort === 'new') orderBy = { createdAt: 'desc' }
-  else if (opts.sort === 'hot') orderBy = { temperature: 'desc' }
-  
-  const [deals, total] = await Promise.all([
-    db.deal.findMany({
+  let finalDeals: any[] = []
+  let totalCount = 0
+
+  if (opts.sort === 'trending') {
+    // For trending, fetch recent 200 active deals, sort them using HackerNews algorithm
+    const allRecent = await db.deal.findMany({
       where,
-      orderBy,
-      skip,
-      take: limit,
+      orderBy: { createdAt: 'desc' },
+      take: 200,
       include: {
         category: true,
         user: { select: { id: true, name: true, avatar: true, tier: true } },
         _count: { select: { comments: true } }
       }
-    }),
-    db.deal.count({ where })
-  ])
+    })
+    
+    // HN Ranking: Points / (Age_Hours + 2)^1.8
+    const now = Date.now()
+    allRecent.sort((a, b) => {
+      const pointsA = Math.max(a.temperature / 10, 0)
+      const pointsB = Math.max(b.temperature / 10, 0)
+      const hoursA = (now - a.createdAt.getTime()) / 3600000
+      const hoursB = (now - b.createdAt.getTime()) / 3600000
+      
+      const scoreA = pointsA / Math.pow(hoursA + 2, 1.8)
+      const scoreB = pointsB / Math.pow(hoursB + 2, 1.8)
+      
+      return scoreB - scoreA
+    })
+    
+    finalDeals = allRecent.slice(skip, skip + limit)
+    totalCount = Math.min(200, await db.deal.count({ where }))
+  } else {
+    let orderBy: any = { temperature: 'desc' }
+    if (opts.sort === 'new') orderBy = { createdAt: 'desc' }
+    else if (opts.sort === 'hot') orderBy = { temperature: 'desc' }
+    
+    const [fetchedDeals, count] = await Promise.all([
+      db.deal.findMany({
+        where,
+        orderBy,
+        skip,
+        take: limit,
+        include: {
+          category: true,
+          user: { select: { id: true, name: true, avatar: true, tier: true } },
+          _count: { select: { comments: true } }
+        }
+      }),
+      db.deal.count({ where })
+    ])
+    finalDeals = fetchedDeals
+    totalCount = count
+  }
 
-  const response = { deals, total, pages: Math.ceil(total / limit) }
+  const serializedDeals = finalDeals.map(d => ({
+    ...d,
+    price: d.price ? Number(d.price) : null,
+    comparePrice: d.comparePrice ? Number(d.comparePrice) : null,
+  }))
+
+  const response = { deals: serializedDeals, total: totalCount, pages: Math.ceil(totalCount / limit) }
   // Cache for 60 seconds
   await setCached(cacheKey, response, 60)
   return response
