@@ -38,7 +38,7 @@ export async function getDashboardStats() {
 }
 
 import { sendEmail } from '@/lib/email'
-import { render } from '@react-email/render'
+import { render } from 'react-email'
 import DealApprovedEmail from '@/emails/deal-approved'
 import DealRejectedEmail from '@/emails/deal-rejected'
 import DealAlertEmail from '@/emails/deal-alert'

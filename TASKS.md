@@ -260,4 +260,4 @@ Layout: var(--nav-height), var(--avatar-size), var(--button-height), var(--icon-
 
 **Tailwind syntax**: `text-[var(--color-primary)]`, `bg-[var(--color-surface)]`, `p-[var(--card-padding)]`, `rounded-[var(--border-radius-md)]`, `text-[length:var(--font-size-lg)]`
 
-> ⚠️ For font sizes use `text-[length:var(...)]` with `length:` prefix, otherwise Tailwind treats it as a color.
+> ⚠️ For font sizes use `text-[length:var(--font-size-base)]` with `length:` prefix, otherwise Tailwind treats it as a color.
