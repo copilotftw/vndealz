@@ -1,0 +1,22 @@
+name: Deploy to Proxmox
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    
+    steps:
+      - name: Update Live Server
+        run: |
+          cd /opt/vndealz
+          git fetch origin main
+          git reset --hard origin/main
+          npm ci
+          npx prisma generate
+          npx prisma db push
+          npm run build
+          pm2 restart vndealz
