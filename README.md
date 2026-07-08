@@ -104,24 +104,16 @@ GOOGLE_CLIENT_SECRET=""
 RESEND_API_KEY="your-resend-api-key"
 ```
 
-## 6. PM2 Configuration (ecosystem.config.js)
+## 6. PM2 Configuration
 
-Create an `ecosystem.config.js` in `/opt/vndealz` to tell PM2 how to run your Next.js app:
-```javascript
-module.exports = {
-  apps: [
-    {
-      name: 'vndealz',
-      script: 'node_modules/next/dist/bin/next',
-      args: 'start -p 3003',
-      cwd: '/opt/vndealz',
-      env: {
-        NODE_ENV: 'production',
-      },
-    },
-  ],
-}
+Instead of a complicated configuration file, you can just start the app directly and save the PM2 list:
+```bash
+cd /opt/vndealz
+pm2 start npm --name "vndealz" -- start -- -p 3003
+pm2 save
+pm2 startup
 ```
+This will ensure your app starts automatically when the LXC container reboots.
 
 ## 7. Nginx Reverse Proxy Setup
 
