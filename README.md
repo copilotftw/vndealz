@@ -113,7 +113,7 @@ module.exports = {
     {
       name: 'vndealz',
       script: 'node_modules/next/dist/bin/next',
-      args: 'start -p 3000',
+      args: 'start -p 3003',
       cwd: '/opt/vndealz',
       env: {
         NODE_ENV: 'production',
@@ -136,7 +136,7 @@ server {
     server_name your-domain.com www.your-domain.com;
 
     location / {
-        proxy_pass http://localhost:3000;
+        proxy_pass http://localhost:3003;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -165,4 +165,4 @@ With the GitHub Action `deploy.yml` configured in the codebase, any push to the 
 Your app will automatically update and restart within seconds of a push!
 
 ---
-*If you are using Cloudflare Tunnels instead of port forwarding, skip the Nginx configuration and point your Cloudflare Tunnel directly to `http://localhost:3000`.*
+*If you are using Cloudflare Tunnels instead of port forwarding, skip the Nginx configuration and point your Cloudflare Tunnel directly to `http://localhost:3003`.*
