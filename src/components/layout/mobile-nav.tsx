@@ -14,7 +14,7 @@ export function MobileNav() {
   const navItems = [
     { href: '/', icon: Home, label: t('home') },
     { href: '/canh-bao-deal', icon: AlarmClock, label: t('alarms') },
-    { href: '/dang-deal', icon: PlusCircle, label: t('submit'), special: true },
+    { href: '/dang', icon: PlusCircle, label: t('submit'), special: true },
     { href: '/thong-bao', icon: Bell, label: t('alerts') },
     { href: user ? `/ho-so/${user.name}` : '/dang-nhap', icon: User, label: user ? t('profile') : t('login') },
   ]
@@ -31,9 +31,6 @@ export function MobileNav() {
               <div className="w-12 h-12 rounded-full bg-[var(--color-primary)] text-white flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
                 <Icon className="w-6 h-6" />
               </div>
-              <span className="text-[length:var(--font-size-xs)] mt-1 font-medium text-[var(--color-primary)]">
-                {item.label}
-              </span>
             </Link>
           )
         }

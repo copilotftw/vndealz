@@ -6,9 +6,7 @@ export default getRequestConfig(async () => {
   let locale = cookieStore.get('NEXT_LOCALE')?.value
   
   if (!locale) {
-    const headersList = await headers()
-    const acceptLanguage = headersList.get('accept-language') || ''
-    locale = acceptLanguage.toLowerCase().includes('en') ? 'en' : 'vi'
+    locale = 'vi'
   }
   
   return {
