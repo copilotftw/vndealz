@@ -81,7 +81,7 @@ export function ProfileActions({ username, initialIsFollowing = false, initialIs
             }`}>
               <MoreHorizontal className="w-4 h-4" />
           </PopoverTrigger>
-          <PopoverContent className="w-64 bg-[var(--color-surface)] border-none text-white rounded-xl p-4 flex flex-col gap-4 shadow-xl" align="start" sideOffset={8}>
+          <PopoverContent className="w-64 p-4 flex flex-col gap-4" align="start" sideOffset={8}>
             <p className="text-sm font-medium leading-relaxed pr-6">
               With the mute option you can hide this user's feed.
             </p>

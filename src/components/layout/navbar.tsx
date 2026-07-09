@@ -158,7 +158,7 @@ export function Navbar() {
                         </Avatar>
                       </Button>
                     } />
-                    <DropdownMenuContent className="w-56 glass" align="end">
+                    <DropdownMenuContent className="w-56" align="end">
                       <div className="px-2 py-1.5 font-normal">
                         <div className="flex flex-col space-y-1">
                           <p className="text-sm font-medium leading-none text-[var(--color-text)]">{user.name}</p>
@@ -250,7 +250,7 @@ export function Navbar() {
                       <ChevronDown className="w-3 h-3 opacity-60" />
                     </button>
                   } />
-                  <DropdownMenuContent align="start" className="w-56 glass-strong max-h-[70vh] overflow-y-auto">
+                  <DropdownMenuContent align="start" className="w-56 max-h-[70vh] overflow-y-auto">
                     <DropdownMenuItem render={<Link href="/ma-giam-gia" className="cursor-pointer py-2 px-3 font-bold text-[var(--color-primary)] border-b border-[var(--color-border)]/50 mb-1" />}>
                       {t('vouchers')}
                     </DropdownMenuItem>
@@ -271,7 +271,7 @@ export function Navbar() {
                       <ChevronDown className="w-3 h-3 opacity-60" />
                     </button>
                   } />
-                  <DropdownMenuContent align="start" className="w-72 glass-strong max-h-[70vh] overflow-y-auto">
+                  <DropdownMenuContent align="start" className="w-72 max-h-[70vh] overflow-y-auto">
                     <DropdownMenuItem render={<Link href="/mien-phi" className="cursor-pointer py-2 px-3 font-bold text-[var(--color-primary)] border-b border-[var(--color-border)]/50 mb-1" />}>
                       {t('freebies')}
                     </DropdownMenuItem>

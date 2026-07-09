@@ -52,7 +52,7 @@ export function CategoryDropdown() {
             </div>
           </DropdownMenuSubTrigger>
           <DropdownMenuPortal>
-            <DropdownMenuSubContent className="glass-strong min-w-[200px]">
+            <DropdownMenuSubContent className="min-w-[200px]">
               <DropdownMenuItem render={<Link href={`/danh-muc/${node.slug}`} className="cursor-pointer py-2 px-3 font-semibold text-[var(--color-primary)]" />} key={`all-${node.id}`}>
                 {t('all')} {locale === 'vi' ? node.nameVi : node.nameEn}
               </DropdownMenuItem>
@@ -90,7 +90,7 @@ export function CategoryDropdown() {
         {t('categories')}
         <ChevronDown className="w-3 h-3 opacity-60" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56 glass-strong max-h-[70vh] overflow-y-auto" align="start" sideOffset={8}>
+      <DropdownMenuContent className="w-56 max-h-[70vh] overflow-y-auto" align="start" sideOffset={8}>
         <DropdownMenuItem render={<Link href="/danh-muc" className="cursor-pointer py-2 px-3 font-bold text-[var(--color-primary)] border-b border-[var(--color-border)]/50 mb-1" />}>
           {t('allCategories')}
         </DropdownMenuItem>

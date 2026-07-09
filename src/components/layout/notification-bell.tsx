@@ -123,7 +123,7 @@ export function NotificationBell({ customTrigger }: { customTrigger?: React.Reac
          <PopoverTrigger>{trigger}</PopoverTrigger>
       )}
       
-      <PopoverContent align="end" className="w-[380px] p-0 rounded-2xl overflow-hidden glass-strong shadow-2xl border border-[var(--color-border)]/50 mt-2 z-[60]">
+      <PopoverContent align="end" className="w-[380px] p-0 mt-2 z-[60]">
         {content}
       </PopoverContent>
     </Popover>

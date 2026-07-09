@@ -79,10 +79,7 @@ export function LiveSearchDropdown({ query, isOpen, onClose }: LiveSearchDropdow
   return (
     <div 
       ref={dropdownRef}
-      className="absolute top-full left-0 w-full mt-2 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl shadow-2xl overflow-hidden z-50 max-h-[85vh] overflow-y-auto page-enter"
-      style={{
-        boxShadow: '0 10px 40px -10px rgba(0,0,0,0.5)'
-      }}
+      className="absolute top-full left-0 w-full mt-2 ui-dropdown animate-in fade-in slide-in-from-top-2 z-50 max-h-[85vh]"
     >
       {isLoading && !results && (
         <div className="p-4 text-center text-sm text-[var(--color-text-muted)]">Đang tìm kiếm...</div>
