@@ -46,13 +46,13 @@ export function CategoryTreeManager({ initialTree }: { initialTree: any[] }) {
 
           <div className="flex items-center gap-1 opacity-0 hover:opacity-100 focus-within:opacity-100 transition-opacity">
             <Button variant="ghost" size="icon-sm">
-              <Plus className="w-4 h-4 text-green-600" />
+              <Plus className="w-4 h-4 text-[var(--color-success)]" />
             </Button>
             <Button variant="ghost" size="icon-sm">
-              <Edit2 className="w-4 h-4 text-blue-600" />
+              <Edit2 className="w-4 h-4 text-[var(--color-primary)]" />
             </Button>
             <Button variant="ghost" size="icon-sm">
-              <Trash2 className="w-4 h-4 text-red-600" />
+              <Trash2 className="w-4 h-4 text-[var(--color-danger)]" />
             </Button>
           </div>
         </div>

@@ -6,14 +6,12 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts')
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
-      { protocol: 'https', hostname: 'utfs.io' }, // Uploadthing
-      { protocol: 'https', hostname: 'shopee.vn' },
-      { protocol: 'https', hostname: 'lazada.vn' },
-      { protocol: 'https', hostname: 'tiki.vn' },
-      { protocol: 'https', hostname: 'picsum.photos' },
-      { protocol: 'https', hostname: 'api.dicebear.com' },
-      // Add more merchant domains as needed
+      { protocol: 'https', hostname: '**' }, // ponytail: user-submitted URLs can be from any domain
     ],
+    deviceSizes: [640, 750, 828, 1080, 1200],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256],
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 86400, // 24h
   },
 }
 

@@ -68,7 +68,7 @@ export function DealDetail({ deal, locale, initialIsSaved = false }: { deal: any
       <article className="bg-[var(--color-surface)] border border-[var(--color-border)]/60 rounded-[var(--border-radius-xl)] shadow-sm overflow-hidden flex flex-col md:flex-row">
         
         {/* Left: Image Gallery */}
-        <div className="w-full md:w-[480px] shrink-0 bg-[#F5F5F5] dark:bg-black relative p-4 flex gap-4 md:border-r border-[var(--color-border)]/60">
+        <div className="w-full md:w-[480px] shrink-0 bg-[var(--color-surface-hover)] relative p-4 flex gap-4 md:border-r border-[var(--color-border)]/60">
           
           {/* Thumbnails (Only show if multiple images) */}
           {allImages.length > 1 && (
@@ -152,7 +152,7 @@ export function DealDetail({ deal, locale, initialIsSaved = false }: { deal: any
 
           <div className="flex flex-wrap items-center gap-3 mb-2">
             {deal.price !== null && (
-              <span className="text-[36px] font-black text-[#22c55e] leading-none tracking-tight">
+              <span className="text-[36px] font-black text-[var(--color-success)] leading-none tracking-tight">
                 {formatPrice(Number(deal.price), locale === 'vi' ? 'vi-VN' : 'en-US')}
               </span>
             )}
@@ -165,14 +165,14 @@ export function DealDetail({ deal, locale, initialIsSaved = false }: { deal: any
               </div>
             )}
             {deal.price !== null && deal.comparePrice !== null && deal.comparePrice > deal.price && (
-              <span className="bg-[#1a3821] text-[#22c55e] border border-[#22c55e]/20 text-sm font-black px-2 py-1 rounded shadow-sm">
+              <span className="bg-[var(--color-success)]/10 text-[var(--color-success)] border border-[var(--color-success)]/20 text-sm font-black px-2 py-1 rounded shadow-sm">
                 -{Math.round((1 - deal.price / deal.comparePrice) * 100)}%
               </span>
             )}
           </div>
           
           <div className="text-sm font-semibold text-[var(--color-text-muted)] mb-8">
-            {t('distributedBy')} <span className="text-white">{deal.merchant || (deal.url ? new URL(deal.url).hostname.replace('www.', '') : 'Unknown')}</span>
+            {t('distributedBy')} <span className="text-[var(--color-text)]">{deal.merchant || (deal.url ? new URL(deal.url).hostname.replace('www.', '') : 'Unknown')}</span>
           </div>
 
           <div className="text-sm text-[var(--color-text-muted)] mb-6 flex flex-wrap items-center gap-x-1.5">
@@ -181,7 +181,7 @@ export function DealDetail({ deal, locale, initialIsSaved = false }: { deal: any
           </div>
 
           <div className="mt-auto flex flex-col sm:flex-row gap-3 pt-4">
-            <Link href={affiliateUrl} target="_blank" rel="nofollow noopener" className="flex-1 max-w-[280px] inline-flex items-center justify-center rounded-full bg-[#379c14] hover:bg-[#379c14]/90 text-white font-bold h-12 text-[17px] shadow-sm transition-colors">
+            <Link href={affiliateUrl} target="_blank" rel="nofollow noopener" className="flex-1 max-w-[280px] inline-flex items-center justify-center rounded-full bg-[var(--color-success)] hover:brightness-110 text-white font-bold h-12 text-[17px] shadow-sm transition-colors">
                 {t('goToDeal')}
                 <ExternalLink className="ml-2 w-4 h-4" />
             </Link>
@@ -245,7 +245,7 @@ export function DealDetail({ deal, locale, initialIsSaved = false }: { deal: any
                 {deal.user.name}
               </Link>
               {deal.user.tier === 'MODERATOR' && (
-                <span className="bg-[#e8f5e9] text-[#2e7d32] border border-[#a5d6a7] text-[10px] font-bold px-1.5 py-0.5 rounded-sm flex items-center gap-1 uppercase tracking-wide">
+                <span className="bg-[var(--color-success)]/10 text-[var(--color-success)] border border-[var(--color-success)]/30 text-[10px] font-bold px-1.5 py-0.5 rounded-sm flex items-center gap-1 uppercase tracking-wide">
                   <BadgeCheck className="w-3 h-3" />
                   {t('editor')}
                 </span>
@@ -261,7 +261,7 @@ export function DealDetail({ deal, locale, initialIsSaved = false }: { deal: any
 
         {/* Alert Banner (Mocked for style) */}
         <div className="bg-[var(--color-surface-hover)]/50 border border-[var(--color-border)]/40 rounded-lg p-4 mb-6 flex items-start gap-3 text-sm">
-          <AlertCircle className="w-5 h-5 text-orange-600 shrink-0 mt-0.5" />
+          <AlertCircle className="w-5 h-5 text-[var(--color-danger)] shrink-0 mt-0.5" />
           <div className="flex-1 font-semibold text-[var(--color-text)]">
             {t('importTaxAlert')}
           </div>

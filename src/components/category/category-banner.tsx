@@ -11,13 +11,13 @@ type CategoryBannerProps = {
 
 export function CategoryBanner({ title, subtitle, images, breadcrumbs }: CategoryBannerProps) {
   return (
-    <div className="w-full bg-[#181a1b] text-white py-12 md:py-20 px-4 md:px-8 relative overflow-hidden">
+    <div className="w-full bg-[var(--color-nav-bg)] text-[var(--color-text)] py-12 md:py-20 px-4 md:px-8 relative overflow-hidden">
       <div className="max-w-[1280px] mx-auto flex flex-col md:flex-row md:items-center justify-between relative z-10 gap-8">
         
         {/* Left Side: Title and Breadcrumbs */}
         <div className="max-w-2xl">
           {breadcrumbs && (
-            <div className="flex flex-wrap items-center gap-2 text-sm text-gray-400 mb-6">
+            <div className="flex flex-wrap items-center gap-2 text-sm text-[var(--color-text-muted)] mb-6">
               <Link href="/" className="hover:text-white transition-colors">Home</Link>
               {breadcrumbs.map((bc, idx) => (
                 <div key={idx} className="flex items-center gap-2">
@@ -33,7 +33,7 @@ export function CategoryBanner({ title, subtitle, images, breadcrumbs }: Categor
           <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
             {title}
           </h1>
-          <p className="text-lg text-gray-400">
+          <p className="text-lg text-[var(--color-text-muted)]">
             {subtitle}
           </p>
         </div>
@@ -44,7 +44,7 @@ export function CategoryBanner({ title, subtitle, images, breadcrumbs }: Categor
             {images.slice(0, 5).map((img, idx) => (
               <div 
                 key={idx} 
-                className={`relative rounded-lg overflow-hidden shadow-2xl bg-white border border-gray-800 ${
+                className={`relative rounded-lg overflow-hidden shadow-2xl bg-[var(--color-surface)] border border-[var(--color-border)] ${
                   idx % 2 !== 0 ? 'translate-y-8' : '' // Staggered masonry effect
                 }`}
                 style={{

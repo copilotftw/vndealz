@@ -93,7 +93,7 @@ export function ThemePanel({ initialConfig }: { initialConfig: any }) {
             max={4}
             value={scaleIndex >= 0 ? scaleIndex : 2}
             onChange={(e) => setConfig({ ...config, scale: SCALE_KEYS[parseInt(e.target.value)] })}
-            className="w-full h-2 rounded-full appearance-none cursor-pointer accent-[var(--color-primary,#FF4500)]"
+            className="w-full h-2 rounded-full appearance-none cursor-pointer accent-[var(--color-primary)]"
             style={{ background: `linear-gradient(to right, var(--color-primary) 0%, var(--color-primary) ${((scaleIndex >= 0 ? scaleIndex : 2) / 4) * 100}%, var(--color-border) ${((scaleIndex >= 0 ? scaleIndex : 2) / 4) * 100}%, var(--color-border) 100%)` }}
           />
           <div className="flex justify-between text-xs text-muted-foreground px-1">
@@ -145,7 +145,7 @@ export function ThemePanel({ initialConfig }: { initialConfig: any }) {
         <Textarea 
           value={config.customCss || ''} 
           onChange={(e) => setConfig({ ...config, customCss: e.target.value })}
-          placeholder=":root { --color-primary: #ff0000; }"
+          placeholder=":root { --color-primary: #3ea534; }"
           className="font-mono text-sm bg-muted/50"
           rows={6}
         />

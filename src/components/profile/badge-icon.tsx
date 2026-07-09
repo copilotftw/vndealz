@@ -7,9 +7,9 @@ interface BadgeIconProps {
   className?: string
 }
 
-export function BadgeIcon({ icon: Icon, color = '#cbd5e1', isLocked = false, className = '' }: BadgeIconProps) {
+export function BadgeIcon({ icon: Icon, color = 'var(--color-border)', isLocked = false, className = '' }: BadgeIconProps) {
   const bgColor = isLocked ? 'var(--color-surface-hover)' : color
-  const iconColor = isLocked ? 'var(--color-text-muted)' : '#ffffff'
+  const iconColor = isLocked ? 'var(--color-text-muted)' : 'var(--color-nav-bg)'
 
   return (
     <div 

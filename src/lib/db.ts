@@ -3,11 +3,14 @@ import { PrismaClient } from '@/generated/prisma'
 import { PrismaMariaDb } from '@prisma/adapter-mariadb'
 
 function createPrismaClient() {
+  if (!process.env.DB_HOST || !process.env.DB_PASSWORD) {
+    throw new Error('Missing required DB_* environment variables. See .env.example')
+  }
   const adapter = new PrismaMariaDb({
-    host: process.env.DB_HOST || '192.168.1.105',
+    host: process.env.DB_HOST,
     port: Number(process.env.DB_PORT || 3306),
     user: process.env.DB_USER || 'nguyen',
-    password: process.env.DB_PASSWORD || '**********',
+    password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME || 'vndealz',
     connectionLimit: 5,
   })

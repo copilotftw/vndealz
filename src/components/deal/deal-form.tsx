@@ -78,7 +78,7 @@ export function DealForm({ categories }: { categories: any[] }) {
                 }`}
               >
                 <div className={`w-6 h-6 rounded-full flex items-center justify-center border ${
-                  isActive ? 'border-[var(--color-primary)]' : isPast ? 'border-green-500 text-green-500' : 'border-current opacity-50'
+                  isActive ? 'border-[var(--color-primary)]' : isPast ? 'border-[var(--color-success)] text-[var(--color-success)]' : 'border-current opacity-50'
                 }`}>
                   {isPast ? <CheckCircle2 className="w-4 h-4" /> : <Icon className="w-3.5 h-3.5" />}
                 </div>
@@ -219,7 +219,7 @@ export function DealForm({ categories }: { categories: any[] }) {
               {t('next')} <ChevronRight className="w-4 h-4 ml-1" />
             </Button>
           ) : (
-            <Button type="submit" disabled={isPending} className="rounded-full px-8 bg-[#3ea534] hover:bg-[#34932a] text-white font-bold">
+            <Button type="submit" disabled={isPending} className="rounded-full px-8 bg-[var(--color-success)] hover:brightness-110 text-white font-bold">
               {isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : t('submitDeal')}
             </Button>
           )}

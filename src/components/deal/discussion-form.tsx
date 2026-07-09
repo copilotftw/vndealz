@@ -166,7 +166,7 @@ export function DiscussionForm({
         <Button 
           type="submit" 
           disabled={isPending}
-          className="w-full h-12 text-base font-bold bg-[#3ea534] hover:bg-[#34932a] text-white"
+          className="w-full h-12 text-base font-bold bg-[var(--color-success)] hover:brightness-110 text-white"
         >
           {t('submit')}
         </Button>

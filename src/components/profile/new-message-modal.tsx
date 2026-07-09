@@ -36,12 +36,12 @@ export function NewMessageModal({ recipientName, isOpen, onClose }: NewMessageMo
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px] p-0 bg-white dark:bg-[#1b1b1b] border-none overflow-hidden gap-0 rounded-[1.5rem]">
+      <DialogContent className="sm:max-w-[600px] p-0 bg-white dark:bg-[var(--color-surface)] border-none overflow-hidden gap-0 rounded-[1.5rem]">
         
         {/* Header */}
-        <DialogHeader className="bg-[#f2f2f2] dark:bg-[#2b2b2b] px-6 py-4 flex flex-row items-center justify-between border-b border-black/5 dark:border-white/5 m-0">
+        <DialogHeader className="bg-[var(--color-surface-hover)] dark:bg-[var(--color-surface-hover)] px-6 py-4 flex flex-row items-center justify-between border-b border-black/5 dark:border-white/5 m-0">
           <div className="flex items-center gap-3">
-            <div className="bg-white dark:bg-[#1b1b1b] p-2 rounded-full shadow-sm">
+            <div className="bg-white dark:bg-[var(--color-surface)] p-2 rounded-full shadow-sm">
               <PencilLine className="w-5 h-5 text-[var(--color-text)]" />
             </div>
             <DialogTitle className="text-xl font-bold text-[var(--color-text)] m-0">
@@ -57,7 +57,7 @@ export function NewMessageModal({ recipientName, isOpen, onClose }: NewMessageMo
             <label className="text-sm font-bold text-[var(--color-text)]">To</label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-gray-400" />
+                <Search className="h-5 w-5 text-[var(--color-text-muted)]" />
               </div>
               <input
                 type="text"
@@ -77,7 +77,7 @@ export function NewMessageModal({ recipientName, isOpen, onClose }: NewMessageMo
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
               />
-              <div className="absolute bottom-3 left-3 text-gray-400 cursor-pointer hover:text-[var(--color-text)] transition-colors">
+              <div className="absolute bottom-3 left-3 text-[var(--color-text-muted)] cursor-pointer hover:text-[var(--color-text)] transition-colors">
                 <Smile className="w-6 h-6" />
               </div>
             </div>
@@ -85,7 +85,7 @@ export function NewMessageModal({ recipientName, isOpen, onClose }: NewMessageMo
         </div>
 
         {/* Footer */}
-        <DialogFooter className="px-6 py-4 bg-[#f2f2f2] dark:bg-[#2b2b2b] border-t border-black/5 dark:border-white/5 flex sm:justify-end gap-3 m-0">
+        <DialogFooter className="px-6 py-4 bg-[var(--color-surface-hover)] dark:bg-[var(--color-surface-hover)] border-t border-black/5 dark:border-white/5 flex sm:justify-end gap-3 m-0">
           <Button 
             variant="ghost" 
             onClick={onClose} 

@@ -75,6 +75,7 @@
     "@swc/core@1.15.43": true,
     "@prisma/engines@7.8.0": true,
     "esbuild@0.28.1": true,
-    "msgpackr-extract@3.0.4": true
+    "msgpackr-extract@3.0.4": true,
+    "fsevents@2.3.3": true
   }
 }

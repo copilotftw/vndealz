@@ -86,7 +86,7 @@ export function ReferralForm() {
                 }`}
               >
                 <div className={`w-6 h-6 rounded-full flex items-center justify-center border ${
-                  isActive ? 'border-[var(--color-primary)]' : isPast ? 'border-[#3ea534] text-[#3ea534]' : 'border-current opacity-50'
+                  isActive ? 'border-[var(--color-primary)]' : isPast ? 'border-[var(--color-success)] text-[var(--color-success)]' : 'border-current opacity-50'
                 }`}>
                   {isPast ? <CheckCircle2 className="w-4 h-4" /> : <Icon className="w-3.5 h-3.5" />}
                 </div>
@@ -113,7 +113,7 @@ export function ReferralForm() {
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
                   placeholder={t('searchPlaceholder')}
-                  className="pl-12 h-12 text-base rounded-lg bg-black/5 dark:bg-white/5 border-[var(--color-border)] focus:border-[#3ea534] focus:ring-[#3ea534]"
+                  className="pl-12 h-12 text-base rounded-lg bg-black/5 dark:bg-white/5 border-[var(--color-border)] focus:border-[var(--color-success)] focus:ring-[var(--color-success)]"
                 />
               </div>
             </div>
@@ -160,13 +160,13 @@ export function ReferralForm() {
                 <button
                   key={campaign.id}
                   onClick={() => handleCampaignSelect(campaign)}
-                  className="w-full text-left p-4 rounded-xl border border-[var(--color-border)] bg-black/5 dark:bg-white/5 hover:border-[#3ea534] transition-colors flex items-center justify-between group"
+                  className="w-full text-left p-4 rounded-xl border border-[var(--color-border)] bg-black/5 dark:bg-white/5 hover:border-[var(--color-success)] transition-colors flex items-center justify-between group"
                 >
                   <div>
                     <h3 className="font-bold text-lg">{campaign.title}</h3>
                     <p className="text-sm text-[var(--color-text-muted)] mt-1">{campaign.desc}</p>
                   </div>
-                  <div className="w-8 h-8 rounded-full bg-[#3ea534] text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                  <div className="w-8 h-8 rounded-full bg-[var(--color-success)] text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
                     <ChevronRight className="w-5 h-5" />
                   </div>
                 </button>
@@ -219,7 +219,7 @@ export function ReferralForm() {
                 <Button 
                   type="submit" 
                   disabled={isPending || !link}
-                  className="bg-[#3ea534] hover:bg-[#34932a] text-white h-12 px-8 rounded-lg font-bold"
+                  className="bg-[var(--color-success)] hover:brightness-110 text-white h-12 px-8 rounded-lg font-bold"
                 >
                   {isPending ? t('submitting') : t('submit')}
                 </Button>

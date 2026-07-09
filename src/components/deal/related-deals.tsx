@@ -55,7 +55,7 @@ export async function RelatedDeals({ categorySlug, currentDealId, locale }: { ca
                     </s>
                   )}
                   {deal.comparePrice !== null && deal.price !== null && (
-                    <span className="bg-[#e8f5e9] text-[#2e7d32] border border-[#a5d6a7] text-[10px] font-bold px-1 py-0.5 rounded-sm">
+                    <span className="bg-[var(--color-success)]/10 text-[var(--color-success)] border border-[var(--color-success)]/30 text-[10px] font-bold px-1 py-0.5 rounded-sm">
                       -{Math.round((1 - Number(deal.price) / Number(deal.comparePrice)) * 100)}%
                     </span>
                   )}

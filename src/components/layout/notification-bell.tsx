@@ -15,7 +15,7 @@ export function NotificationBell() {
         <div className="relative flex items-center justify-center shrink-0">
           <Bell className="w-[var(--icon-size)] h-[var(--icon-size)]" />
           {hasUnread && (
-            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white dark:border-[var(--color-nav-bg)]" />
+            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[var(--color-danger)] rounded-full border-2 border-white dark:border-[var(--color-nav-bg)]" />
           )}
         </div>
         <span className="hidden xl:inline font-bold text-sm whitespace-nowrap">Thông báo</span>
@@ -56,7 +56,7 @@ export function NotificationBell() {
               <div className="divide-y divide-[var(--color-border)]/30">
                  {[1, 2, 3, 4].map(i => (
                     <div key={i} className="p-4 flex gap-3 hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer transition-colors">
-                       <div className="w-10 h-10 rounded-full bg-blue-500 shrink-0 text-white flex items-center justify-center font-bold">F</div>
+                       <div className="w-10 h-10 rounded-full bg-[var(--color-primary)] shrink-0 text-white flex items-center justify-center font-bold">F</div>
                        <div className="flex-1 min-w-0">
                           <p className="text-sm">
                              Der Deal <strong>Google Pixel 10 Pro 128 GB</strong> dem Du folgst, wurde von <strong>Schorsche</strong> und 147 weiteren kommentiert
@@ -72,7 +72,7 @@ export function NotificationBell() {
               <div className="divide-y divide-[var(--color-border)]/30">
                  {[1, 2, 3].map(i => (
                     <div key={i} className="p-4 flex gap-3 hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer transition-colors">
-                       <div className="w-10 h-10 rounded-full bg-green-500 shrink-0 flex items-center justify-center text-white text-xl">🐸</div>
+                       <div className="w-10 h-10 rounded-full bg-[var(--color-success)] shrink-0 flex items-center justify-center text-white text-xl">🐸</div>
                        <div className="flex-1 min-w-0">
                           <div className="flex justify-between items-start">
                              <h4 className="font-bold text-sm">fabi1</h4>
