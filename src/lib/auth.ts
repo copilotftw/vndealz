@@ -44,6 +44,10 @@ export const auth = betterAuth({
   },
   trustedOrigins: [
     'http://localhost:3000',
+    'http://192.168.1.106',
+    'http://192.168.1.106:3000',
+    'https://vndealz.chromalabs.de',
+    'http://vndealz.chromalabs.de',
     process.env.BETTER_AUTH_URL || '',
     process.env.NEXT_PUBLIC_APP_URL || '',
   ].filter(Boolean),
