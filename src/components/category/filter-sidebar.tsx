@@ -45,7 +45,7 @@ export function FilterSidebar() {
         {/* Sort */}
         <div className="space-y-3">
           <Label className="text-sm font-bold text-[var(--color-text)]">Sortieren</Label>
-          <Select value={currentSort} onValueChange={(val) => updateQuery('sort', val)}>
+          <Select value={currentSort} onValueChange={(val) => updateQuery('sort', val || '')}>
             <SelectTrigger className="w-full bg-black/5 dark:bg-white/5 border-transparent h-10">
               <SelectValue placeholder="Sortieren nach..." />
             </SelectTrigger>
@@ -86,7 +86,7 @@ export function FilterSidebar() {
             <Label className="text-sm font-bold text-[var(--color-text)]">Temperatur</Label>
             <HelpCircle className="w-4 h-4 text-[var(--color-text-muted)]" />
           </div>
-          <RadioGroup value={currentTemp} onValueChange={(val) => updateQuery('temp', val)} className="gap-3">
+          <RadioGroup value={currentTemp} onValueChange={(val) => updateQuery('temp', val || '')} className="gap-3">
             <label className="flex items-center justify-between cursor-pointer group">
               <div className="flex items-center gap-3">
                 <RadioGroupItem value="all" id="temp-all" />

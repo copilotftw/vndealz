@@ -20,7 +20,7 @@ const STEPS = [
   { id: 5, nameKey: 'stepReview', icon: CheckCircle2 }
 ]
 
-export function DealForm({ categories }: { categories: any[] }) {
+export function VoucherForm({ categories }: { categories: any[] }) {
   const router = useRouter()
   const locale = useLocale()
   const t = useTranslations('deal')

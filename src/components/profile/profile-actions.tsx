@@ -74,14 +74,12 @@ export function ProfileActions({ username, initialIsFollowing = false, initialIs
           Message
         </button>
         <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
-          <PopoverTrigger asChild>
-            <button className={`flex items-center justify-center w-8 h-8 rounded-full border transition-colors shrink-0 outline-none ${
+          <PopoverTrigger className={`flex items-center justify-center w-8 h-8 rounded-full border transition-colors shrink-0 outline-none ${
               isMuted || isPopoverOpen
                 ? 'border-[var(--color-primary)] text-[var(--color-primary)] bg-[var(--color-primary)]/10'
                 : 'border-[var(--color-border)] text-[var(--color-text)] hover:bg-black/5 dark:hover:bg-white/5'
             }`}>
               <MoreHorizontal className="w-4 h-4" />
-            </button>
           </PopoverTrigger>
           <PopoverContent className="w-64 bg-[#1b1b1b] border-none text-white rounded-xl p-4 flex flex-col gap-4 shadow-xl" align="start" sideOffset={8}>
             <p className="text-sm font-medium leading-relaxed pr-6">
