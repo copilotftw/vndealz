@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Home, Tag, PlusCircle, Bell, User, AlarmClock } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
+import { NotificationBell } from './notification-bell'
 
 export function MobileNav() {
   const pathname = usePathname()
@@ -35,13 +36,31 @@ export function MobileNav() {
           )
         }
 
+        const btnClass = `flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors ${
+          isActive ? 'text-[var(--color-primary)]' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
+        }`
+
+        if (item.href === '/thong-bao') {
+          return (
+            <NotificationBell
+              key={item.href}
+              customTrigger={
+                <button className={btnClass}>
+                  <Icon className="w-5 h-5" />
+                  <span className="text-[length:var(--font-size-xs)] font-medium truncate w-full text-center px-1">
+                    {item.label}
+                  </span>
+                </button>
+              }
+            />
+          )
+        }
+
         return (
           <Link
             key={item.href}
             href={item.href}
-            className={`flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors ${
-              isActive ? 'text-[var(--color-primary)]' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
-            }`}
+            className={btnClass}
           >
             <Icon className="w-5 h-5" />
             <span className="text-[length:var(--font-size-xs)] font-medium truncate w-full text-center px-1">
