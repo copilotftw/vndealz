@@ -28,9 +28,9 @@ export function MobileNav() {
 
         if (item.special) {
           return (
-            <Link key={item.href} href={item.href} className="flex flex-col items-center justify-center -mt-6 relative group">
-              <div className="w-12 h-12 rounded-full bg-[var(--color-primary)] text-white flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-                <Icon className="w-6 h-6" />
+            <Link key={item.href} href={item.href} className="flex flex-col items-center justify-center -mt-10 relative group">
+              <div className="w-14 h-14 rounded-full bg-[var(--color-primary)] text-white flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform border-4 border-[var(--color-bg)]">
+                <Icon className="w-7 h-7" />
               </div>
             </Link>
           )
