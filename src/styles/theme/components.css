@@ -124,40 +124,18 @@
 /* GLASS EFFECTS                         */
 /* ══════════════════════════════════════ */
 /* IMPORTANT: Use backdrop-filter ONLY — never -webkit-backdrop-filter (Chrome conflict) */
-.glass {
+@utility glass {
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
   border: var(--glass-border);
-}
-.dark .glass {
-  background: var(--glass-bg-dark, var(--glass-bg));
-  border: var(--glass-border-dark, var(--glass-border));
+
+  .dark & {
+    background: var(--glass-bg-dark, var(--glass-bg));
+    border: var(--glass-border-dark, var(--glass-border));
+  }
 }
 
-.glass-strong {
-  background: rgba(255,255,255,0.65);
-  backdrop-filter: blur(24px) saturate(200%);
-  border: 1px solid rgba(255,255,255,0.25);
-}
-.dark .glass-strong {
-  background: rgba(20,20,20,0.65);
-  border: 1px solid rgba(255,255,255,0.1);
-}
-
-.glass-subtle {
-  background: rgba(255,255,255,0.35);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.12);
-}
-.dark .glass-subtle {
-  background: rgba(30,30,30,0.35);
-  border: 1px solid rgba(255,255,255,0.05);
-}
-/* ══════════════════════════════════════ */
-/* SHARED DROPDOWN STYLES                  */
-/* ══════════════════════════════════════ */
-@utility ui-dropdown {
-  @apply z-50 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-xl bg-popover text-popover-foreground shadow-xl ring-1 ring-border/50 outline-none duration-150 data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95;
+@utility glass-strong {
   background: rgba(255,255,255,0.65);
   backdrop-filter: blur(24px) saturate(200%);
   border: 1px solid rgba(255,255,255,0.25);
@@ -166,4 +144,21 @@
     background: rgba(20,20,20,0.65);
     border: 1px solid rgba(255,255,255,0.1);
   }
+}
+
+@utility glass-subtle {
+  background: rgba(255,255,255,0.35);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.12);
+
+  .dark & {
+    background: rgba(30,30,30,0.35);
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+}
+/* ══════════════════════════════════════ */
+/* SHARED DROPDOWN STYLES                  */
+/* ══════════════════════════════════════ */
+@utility ui-dropdown {
+  @apply z-50 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-xl bg-popover text-popover-foreground shadow-xl ring-1 ring-border/50 outline-none duration-150 data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 glass-strong;
 }
