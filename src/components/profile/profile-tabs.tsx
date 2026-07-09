@@ -25,7 +25,7 @@ export function ProfileTabs({ username }: ProfileTabsProps) {
     { id: 'activity', label: t('tabs.activity'), href: `/ho-so/${username}/activity` },
     { id: 'deals', label: t('tabs.deals'), href: `/ho-so/${username}/deals` },
     { id: 'referrals', label: t('tabs.referrals'), href: `/ho-so/${username}/referrals` },
-    { id: 'discussions', label: t('tabs.discussions'), href: `/ho-so/${username}/discussions` },
+    { id: 'discussions', label: t('tabs.discussions'), href: `/ho-so/${username}/thao-luan` },
     { id: 'badges', label: t('tabs.badges'), href: `/ho-so/${username}/badges` },
     { id: 'stats', label: t('tabs.stats'), href: `/ho-so/${username}/stats` },
   ]

@@ -14,6 +14,7 @@ export function DealList({
   sort,
   type,
   categorySlug,
+  merchant,
   initialPages
 }: { 
   deals: Deal[]; 
@@ -22,6 +23,7 @@ export function DealList({
   sort?: string;
   type?: string;
   categorySlug?: string;
+  merchant?: string;
   initialPages: number;
 }) {
   const [deals, setDeals] = useState<Deal[]>(initialDeals)
@@ -48,6 +50,7 @@ export function DealList({
         sort: sort as any,
         type,
         categorySlug,
+        merchant,
         page: nextPage
       })
 

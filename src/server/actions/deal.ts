@@ -147,6 +147,7 @@ export async function getDeals(opts: {
   sort?: 'hot' | 'new' | 'trending'
   type?: string
   categorySlug?: string
+  merchant?: string
   page?: number
   limit?: number
 }) {
@@ -162,13 +163,18 @@ export async function getDeals(opts: {
   const nsfwKey = showNsfw ? 'nsfw' : 'sfw'
   
   // Create unique cache key for this query
-  const cacheKey = `deals:${opts.sort || 'hot'}:${opts.type || 'all'}:${opts.categorySlug || 'all'}:${page}:${limit}:${mutedKey}:${nsfwKey}`
+  const cacheKey = `deals:${opts.sort || 'hot'}:${opts.type || 'all'}:${opts.categorySlug || 'all'}:${opts.merchant || 'all'}:${page}:${limit}:${mutedKey}:${nsfwKey}`
   const cachedData = await getCached<{deals: any[], total: number, pages: number}>(cacheKey)
   if (cachedData) return cachedData
 
   let where: any = { status: 'ACTIVE' }
   
   if (opts.type) where.type = opts.type
+  if (opts.merchant) {
+    // Exact case-insensitive match is not natively supported out-of-the-box in Prisma without string functions,
+    // so we use contains which acts case-insensitively in MySQL.
+    where.merchant = { contains: opts.merchant }
+  }
   if (opts.categorySlug) {
     const catIds = await getCategoryWithDescendants(opts.categorySlug)
     if (catIds.length) where.categoryId = { in: catIds }

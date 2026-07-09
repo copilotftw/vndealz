@@ -12,11 +12,13 @@ export async function DealFeed({
   locale,
   type,
   categorySlug,
+  merchant,
 }: { 
   searchParams: { sort?: string; page?: string }
   locale: string
   type?: string
   categorySlug?: string
+  merchant?: string
 }) {
   const sort = (searchParams?.sort as any) || 'hot'
   const page = parseInt(searchParams?.page || '1')
@@ -25,6 +27,7 @@ export async function DealFeed({
     sort,
     type,
     categorySlug,
+    merchant,
     page,
   })
 
@@ -59,6 +62,7 @@ export async function DealFeed({
         sort={sort}
         type={type}
         categorySlug={categorySlug}
+        merchant={merchant}
         initialPages={pages}
       />
     </div>
