@@ -20,7 +20,7 @@ export default async function DiscussionsPage() {
   // Right sidebar: user's recent discussion comments, or hot discussions if not logged in
   let recentActivity: Array<{ id: string; deal: { slug: string; title: string }; createdAt: Date }> = []
   if (session?.user) {
-    recentActivity = await db.comment.findMany({
+    const raw = await db.comment.findMany({
       where: {
         userId: session.user.id,
         deal: { type: 'DISCUSSION', status: 'ACTIVE' },
@@ -33,6 +33,7 @@ export default async function DiscussionsPage() {
         deal: { select: { slug: true, title: true } },
       },
     })
+    recentActivity = raw.filter((c): c is typeof c & { deal: NonNullable<typeof c.deal> } => c.deal !== null)
   }
 
   return (
