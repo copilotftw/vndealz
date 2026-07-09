@@ -9,6 +9,14 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+.ios-page-enter {
+  animation: iosSlideIn 0.4s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+@keyframes iosSlideIn {
+  from { opacity: 0; transform: translateX(30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
 .sidebar-enter {
   animation: sidebarSlide 0.3s cubic-bezier(0.4,0,0.2,1) both;
 }

@@ -7,7 +7,8 @@ export default async function AdminDealsPage() {
     orderBy: { createdAt: 'desc' },
     include: {
       user: { select: { name: true } },
-      category: { select: { nameVi: true } }
+      category: { select: { nameVi: true } },
+      discussionCategory: { select: { nameVi: true } }
     }
   })
 
@@ -17,7 +18,7 @@ export default async function AdminDealsPage() {
     title: deal.title,
     slug: deal.slug,
     price: deal.price ? formatPrice(Number(deal.price)) : 'Miễn phí',
-    category: deal.category.nameVi,
+    category: deal.category?.nameVi || deal.discussionCategory?.nameVi || 'Khác',
     author: deal.user.name,
     status: deal.status,
     createdAt: timeAgo(deal.createdAt)

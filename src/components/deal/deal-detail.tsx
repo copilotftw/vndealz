@@ -7,14 +7,16 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { 
   Copy, ExternalLink, MessageCircle, Share2, Bookmark, 
-  AlertCircle, MessageSquare, Plus, Flag, Clock, BadgeCheck, Tag
+  AlertCircle, MessageSquare, Plus, Flag, Clock, BadgeCheck, Tag, Check
 } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { useTranslations } from 'next-intl'
+import { toggleSaveDeal } from '@/server/actions/deal'
+import { ShareDealModal } from './share-deal-modal'
 
-export function DealDetail({ deal, locale }: { deal: any, locale: string }) {
+export function DealDetail({ deal, locale, initialIsSaved = false }: { deal: any, locale: string, initialIsSaved?: boolean }) {
   const t = useTranslations('dealDetail')
   const [copied, setCopied] = useState(false)
 
@@ -22,8 +24,39 @@ export function DealDetail({ deal, locale }: { deal: any, locale: string }) {
     if (deal.couponCode) {
       navigator.clipboard.writeText(deal.couponCode)
       setCopied(true)
-      toast.success('Copied!')
+      toast.success(t('copied'))
       setTimeout(() => setCopied(false), 2000)
+    }
+  }
+
+  const [isSaved, setIsSaved] = useState(initialIsSaved)
+  const [isShareOpen, setIsShareOpen] = useState(false)
+  
+  // Collect images
+  const allImages = deal.images?.length > 0 
+    ? deal.images.map((img: any) => img.url) 
+    : [deal.image].filter(Boolean)
+  
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0)
+  const selectedImage = allImages[selectedImageIndex] || 'https://utfs.io/f/placeholder.png'
+
+  const handleSave = async () => {
+    const previousState = isSaved
+    setIsSaved(!isSaved)
+    
+    // Play animation
+    if (!isSaved) {
+      toast.success(t('savedSuccess'))
+    } else {
+      toast(t('unsavedSuccess'))
+    }
+
+    try {
+      const res = await toggleSaveDeal(deal.id)
+      setIsSaved(res.saved)
+    } catch(err) {
+      setIsSaved(previousState)
+      toast.error(t('saveError'))
     }
   }
 
@@ -34,26 +67,45 @@ export function DealDetail({ deal, locale }: { deal: any, locale: string }) {
       {/* 1. TOP SECTION (Card 1) */}
       <article className="bg-[var(--color-surface)] border border-[var(--color-border)]/60 rounded-[var(--border-radius-xl)] shadow-sm overflow-hidden flex flex-col md:flex-row">
         
-        {/* Left: Image */}
-        <div className="w-full md:w-[400px] shrink-0 bg-white relative p-4 flex items-center justify-center border-b md:border-b-0 md:border-r border-[var(--color-border)]/60">
-          <div className="relative w-full aspect-square md:aspect-[4/5] flex items-center justify-center">
+        {/* Left: Image Gallery */}
+        <div className="w-full md:w-[480px] shrink-0 bg-[#F5F5F5] dark:bg-black relative p-4 flex gap-4 md:border-r border-[var(--color-border)]/60">
+          
+          {/* Thumbnails (Only show if multiple images) */}
+          {allImages.length > 1 && (
+            <div className="w-16 shrink-0 flex flex-col gap-2 overflow-y-auto hidden-scrollbar py-2">
+              {allImages.map((img: string, idx: number) => (
+                <button
+                  key={idx}
+                  onClick={() => setSelectedImageIndex(idx)}
+                  className={`relative w-16 h-16 rounded-xl overflow-hidden bg-white shrink-0 border-2 transition-all ${
+                    idx === selectedImageIndex ? 'border-[var(--color-primary)]' : 'border-transparent opacity-60 hover:opacity-100'
+                  }`}
+                >
+                  <Image src={img} alt={`Thumbnail ${idx + 1}`} fill className="object-contain p-1" sizes="64px" />
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Main Selected Image */}
+          <div className="relative flex-1 bg-white rounded-2xl overflow-hidden shadow-sm aspect-square md:aspect-auto md:h-full flex items-center justify-center">
             <Image
-              src={deal.image || 'https://utfs.io/f/placeholder.png'}
+              src={selectedImage}
               alt={deal.title}
               fill
-              className="object-contain"
+              className="object-contain p-4"
               sizes="(max-width: 768px) 100vw, 400px"
               priority
             />
+            <Button variant="outline" size="sm" className="absolute bottom-3 right-3 bg-black/80 hover:bg-black text-white border-transparent rounded-full shadow-lg text-xs font-medium px-4 h-8 transition-colors">
+              <ExternalLink className="w-3.5 h-3.5 mr-1.5" />
+              {t('enlarge')}
+            </Button>
           </div>
-          <Button variant="outline" size="sm" className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm rounded-full shadow-sm text-xs font-medium text-black border-black/10 hover:bg-white">
-            <ExternalLink className="w-3.5 h-3.5 mr-1.5" />
-            {t('enlarge')}
-          </Button>
         </div>
 
         {/* Right: Content */}
-        <div className="flex-1 p-5 md:p-6 flex flex-col relative">
+        <div className="flex-1 p-5 md:p-8 flex flex-col relative">
           
           {/* Header Row */}
           <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
@@ -61,18 +113,26 @@ export function DealDetail({ deal, locale }: { deal: any, locale: string }) {
               <TemperatureVote dealId={deal.id} temperature={deal.temperature} />
             </div>
             
-            <div className="flex items-center gap-4 text-[var(--color-text-muted)] text-sm font-medium">
-              <Link href={`#comments`} className="flex items-center gap-1.5 hover:text-[var(--color-primary)] transition-colors">
-                <MessageCircle className="w-4 h-4" />
+            <div className="flex items-center gap-4 text-[var(--color-text-muted)] text-sm font-semibold">
+              <Link href={`#comments`} className="flex items-center gap-1.5 hover:text-[var(--color-text)] transition-colors">
+                <MessageCircle className="w-5 h-5" />
                 <span>{deal._count?.comments || 0}</span>
               </Link>
-              <button className="flex items-center gap-1.5 hover:text-[var(--color-primary)] transition-colors">
-                <Share2 className="w-4 h-4" />
+              <button 
+                onClick={() => setIsShareOpen(true)}
+                className="flex items-center gap-1.5 hover:text-[var(--color-text)] transition-colors"
+              >
+                <Share2 className="w-5 h-5" />
                 <span className="hidden sm:inline">{t('share')}</span>
               </button>
-              <button className="flex items-center gap-1.5 hover:text-[var(--color-primary)] transition-colors">
-                <Bookmark className="w-4 h-4" />
-                <span className="hidden sm:inline">{t('save')}</span>
+              <button 
+                onClick={handleSave}
+                className="flex items-center gap-1.5 hover:text-[var(--color-text)] transition-all group"
+              >
+                <Bookmark className={`w-5 h-5 transition-all ${isSaved ? 'fill-current text-white scale-110' : ''}`} />
+                <span className={`hidden sm:inline ${isSaved ? 'text-white' : ''}`}>
+                  {isSaved ? t('saved') : t('save')}
+                </span>
               </button>
             </div>
           </div>
@@ -90,22 +150,29 @@ export function DealDetail({ deal, locale }: { deal: any, locale: string }) {
             {deal.title}
           </h1>
 
-          <div className="flex flex-wrap items-end gap-2.5 mb-2">
+          <div className="flex flex-wrap items-center gap-3 mb-2">
             {deal.price !== null && (
-              <span className="text-[length:var(--font-size-3xl)] font-black text-[var(--color-success)] leading-none">
+              <span className="text-[36px] font-black text-[#22c55e] leading-none tracking-tight">
                 {formatPrice(Number(deal.price), locale === 'vi' ? 'vi-VN' : 'en-US')}
               </span>
             )}
             {deal.comparePrice !== null && (
-              <s className="text-[length:var(--font-size-lg)] text-[var(--color-text-muted)] leading-snug">
-                {formatPrice(Number(deal.comparePrice), locale === 'vi' ? 'vi-VN' : 'en-US')}
-              </s>
+              <div className="flex items-center gap-2">
+                <s className="text-[20px] font-bold text-[var(--color-text-muted)] leading-snug">
+                  {formatPrice(Number(deal.comparePrice), locale === 'vi' ? 'vi-VN' : 'en-US')}
+                </s>
+                <AlertCircle className="w-4 h-4 text-[var(--color-text-muted)] opacity-70" />
+              </div>
             )}
-            {deal.comparePrice !== null && deal.price !== null && (
-              <span className="bg-[var(--color-success)]/10 text-[var(--color-success)] text-sm font-bold px-2 py-0.5 rounded ml-1">
-                -{Math.round((1 - Number(deal.price) / Number(deal.comparePrice)) * 100)}%
+            {deal.price !== null && deal.comparePrice !== null && deal.comparePrice > deal.price && (
+              <span className="bg-[#1a3821] text-[#22c55e] border border-[#22c55e]/20 text-sm font-black px-2 py-1 rounded shadow-sm">
+                -{Math.round((1 - deal.price / deal.comparePrice) * 100)}%
               </span>
             )}
+          </div>
+          
+          <div className="text-sm font-semibold text-[var(--color-text-muted)] mb-8">
+            {t('distributedBy')} <span className="text-white">{deal.merchant || (deal.url ? new URL(deal.url).hostname.replace('www.', '') : 'Unknown')}</span>
           </div>
 
           <div className="text-sm text-[var(--color-text-muted)] mb-6 flex flex-wrap items-center gap-x-1.5">
@@ -114,7 +181,7 @@ export function DealDetail({ deal, locale }: { deal: any, locale: string }) {
           </div>
 
           <div className="mt-auto flex flex-col sm:flex-row gap-3 pt-4">
-            <Link href={affiliateUrl} target="_blank" rel="nofollow noopener" className="flex-1 max-w-[280px] inline-flex items-center justify-center rounded-[var(--border-radius-full)] bg-[#379c14] hover:bg-[#379c14]/90 text-white font-bold h-12 text-[17px] shadow-sm transition-colors">
+            <Link href={affiliateUrl} target="_blank" rel="nofollow noopener" className="flex-1 max-w-[280px] inline-flex items-center justify-center rounded-full bg-[#379c14] hover:bg-[#379c14]/90 text-white font-bold h-12 text-[17px] shadow-sm transition-colors">
                 {t('goToDeal')}
                 <ExternalLink className="ml-2 w-4 h-4" />
             </Link>
@@ -123,7 +190,7 @@ export function DealDetail({ deal, locale }: { deal: any, locale: string }) {
               <Button 
                 onClick={copyCoupon} 
                 variant="outline"
-                className="h-12 text-[17px] border-dashed border-[var(--color-primary)] text-[var(--color-primary)] bg-[var(--color-primary)]/5 hover:bg-[var(--color-primary)]/10 rounded-[var(--border-radius-full)]"
+                className="h-12 text-[17px] border-dashed border-[var(--color-primary)] text-[var(--color-primary)] bg-[var(--color-primary)]/5 hover:bg-[var(--color-primary)]/10 rounded-full"
               >
                 <span className="font-mono mr-2">{deal.couponCode}</span>
                 {copied ? <Check className="w-5 h-5 text-[var(--color-success)]" /> : <Copy className="w-5 h-5" />}
@@ -180,7 +247,7 @@ export function DealDetail({ deal, locale }: { deal: any, locale: string }) {
               {deal.user.tier === 'MODERATOR' && (
                 <span className="bg-[#e8f5e9] text-[#2e7d32] border border-[#a5d6a7] text-[10px] font-bold px-1.5 py-0.5 rounded-sm flex items-center gap-1 uppercase tracking-wide">
                   <BadgeCheck className="w-3 h-3" />
-                  Redakteur/in
+                  {t('editor')}
                 </span>
               )}
             </div>
@@ -196,7 +263,7 @@ export function DealDetail({ deal, locale }: { deal: any, locale: string }) {
         <div className="bg-[var(--color-surface-hover)]/50 border border-[var(--color-border)]/40 rounded-lg p-4 mb-6 flex items-start gap-3 text-sm">
           <AlertCircle className="w-5 h-5 text-orange-600 shrink-0 mt-0.5" />
           <div className="flex-1 font-semibold text-[var(--color-text)]">
-            Thay đổi giới hạn miễn thuế đối với hàng nhập khẩu từ các quốc gia ngoài EU
+            {t('importTaxAlert')}
           </div>
         </div>
 
@@ -240,6 +307,12 @@ export function DealDetail({ deal, locale }: { deal: any, locale: string }) {
         </button>
       </div>
 
+      {/* Share Modal */}
+      <ShareDealModal 
+        isOpen={isShareOpen} 
+        onClose={() => setIsShareOpen(false)} 
+        deal={deal} 
+      />
     </div>
   )
 }

@@ -10,6 +10,7 @@ import { CategoryPills } from '@/components/category/category-pills'
 import { Suspense } from 'react'
 
 import { HeaderProvider } from '@/components/layout/header-context'
+import { SidebarWrapper } from '@/components/layout/sidebar-wrapper'
 
 export default async function MainLayout({ children }: { children: React.ReactNode }) {
   const locale = await getLocale()
@@ -22,12 +23,12 @@ export default async function MainLayout({ children }: { children: React.ReactNo
 
       {/* Main content area with sidebar */}
       <div className="site-content flex gap-[var(--section-gap)] px-4 py-[var(--section-gap)] flex-1">
-        <main className="flex-1 min-w-0 page-enter">
+        <main className="flex-1 min-w-0">
           {children}
         </main>
-        <aside className="site-sidebar sidebar-enter hidden lg:block">
+        <SidebarWrapper>
           <Sidebar locale={locale} />
-        </aside>
+        </SidebarWrapper>
       </div>
 
       <Footer locale={locale} />

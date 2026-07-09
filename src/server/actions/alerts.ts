@@ -48,7 +48,7 @@ export async function createAlert(data: {
     },
   })
 
-  revalidatePath('/deal-alarm')
+  revalidatePath('/canh-bao-deal')
   return alert
 }
 
@@ -66,7 +66,7 @@ export async function toggleAlert(id: string, active: boolean) {
     data: { active },
   })
 
-  revalidatePath('/deal-alarm')
+  revalidatePath('/canh-bao-deal')
   return updated
 }
 
@@ -80,6 +80,6 @@ export async function deleteAlert(id: string) {
 
   await db.dealAlert.delete({ where: { id } })
 
-  revalidatePath('/deal-alarm')
+  revalidatePath('/canh-bao-deal')
   return { success: true }
 }

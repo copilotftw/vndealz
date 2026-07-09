@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { useLocale } from 'next-intl'
-import { Globe } from 'lucide-react'
+
 
 export function LanguageSwitch() {
   const locale = useLocale()
@@ -19,12 +19,10 @@ export function LanguageSwitch() {
   return (
     <Button 
       variant="ghost" 
-      size="sm" 
       onClick={toggleLocale}
-      className="nav-icon-btn rounded-full gap-2 px-3 font-semibold"
+      className="nav-icon-btn rounded-full font-semibold text-base h-10 w-10 flex items-center justify-center p-0"
       title={locale === 'vi' ? 'Switch to English' : 'Đổi sang Tiếng Việt'}
     >
-      <Globe className="w-4 h-4 opacity-70" />
       <span>{locale === 'vi' ? 'EN' : 'VI'}</span>
     </Button>
   )

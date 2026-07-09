@@ -8,7 +8,8 @@ export const dealSchema = z.object({
   comparePrice: z.number().positive().optional(),
   couponCode: z.string().max(50).optional(),
   merchant: z.string().max(100).optional(),
-  categoryId: z.string().cuid(),
+  categoryId: z.string().cuid().optional().nullable(),
+  discussionCategoryId: z.string().cuid().optional().nullable(),
   type: z.enum(['DEAL', 'VOUCHER', 'FREEBIE', 'DISCUSSION']).default('DEAL'),
   image: z.string().url().optional(),
   expiresAt: z.date().optional(),
@@ -31,6 +32,15 @@ export const categorySchema = z.object({
   nameEn: z.string().min(1).max(100),
   slug: z.string().min(1).max(100).regex(/^[a-z0-9-]+$/),
   icon: z.string().max(10).optional(),
+  parentId: z.string().cuid().nullable().optional(),
+  order: z.number().int().default(0),
+})
+
+export const discussionCategorySchema = z.object({
+  nameVi: z.string().min(1).max(100),
+  nameEn: z.string().min(1).max(100),
+  slug: z.string().min(1).max(100).regex(/^[a-z0-9-]+$/),
+  icon: z.string().max(20).optional(),
   parentId: z.string().cuid().nullable().optional(),
   order: z.number().int().default(0),
 })

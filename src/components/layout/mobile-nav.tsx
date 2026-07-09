@@ -13,7 +13,7 @@ export function MobileNav() {
 
   const navItems = [
     { href: '/', icon: Home, label: t('home') },
-    { href: '/deal-alarm', icon: AlarmClock, label: t('alarms') },
+    { href: '/canh-bao-deal', icon: AlarmClock, label: t('alarms') },
     { href: '/dang-deal', icon: PlusCircle, label: t('submit'), special: true },
     { href: '/thong-bao', icon: Bell, label: t('alerts') },
     { href: user ? `/ho-so/${user.name}` : '/dang-nhap', icon: User, label: user ? t('profile') : t('login') },

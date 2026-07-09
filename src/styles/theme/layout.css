@@ -294,4 +294,19 @@
 /* ══════════════════════════════════════ */
 @media (max-width: 768px) {
   .site-content { padding-left: 0.5rem; padding-right: 0.5rem; }
+}/* Seamless Integration Utility */
+.nav-seamless {
+  border-bottom: none !important;
+}
+
+.seamless-header {
+  background-color: var(--color-nav-bg);
+  margin-top: calc(-1 * var(--section-gap));
+  padding-top: calc(var(--section-gap) + 1rem);
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
 }

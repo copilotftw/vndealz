@@ -2,6 +2,8 @@ import { db } from '@/lib/db'
 import { notFound } from 'next/navigation'
 import { DealDetail } from '@/components/deal/deal-detail'
 import { CommentThread } from '@/components/comment/comment-thread'
+import { auth } from '@/lib/auth'
+import { headers } from 'next/headers'
 import { getLocale } from 'next-intl/server'
 import { Row3Injector } from '@/components/layout/row3-injector'
 import Link from 'next/link'
@@ -19,9 +21,26 @@ export default async function DealPage({ params }: { params: Promise<{ slug: str
       category: true,
       priceHistory: {
         orderBy: { createdAt: 'asc' }
+      },
+      images: {
+        orderBy: { order: 'asc' }
       }
     }
   })
+
+  let isSaved = false
+  const session = await auth.api.getSession({ headers: await headers() })
+  if (session?.user && deal) {
+    const bookmark = await db.bookmark.findUnique({
+      where: {
+        userId_dealId: {
+          userId: session.user.id,
+          dealId: deal.id
+        }
+      }
+    })
+    isSaved = !!bookmark
+  }
 
   if (!deal) return notFound()
   
@@ -31,7 +50,7 @@ export default async function DealPage({ params }: { params: Promise<{ slug: str
     comparePrice: deal.comparePrice ? Number(deal.comparePrice) : null,
   }
 
-  const breadcrumb = (
+  const breadcrumb = deal.category ? (
     <div className="flex items-center gap-1.5 text-[length:var(--font-size-sm)] text-[var(--color-nav-text-muted)] w-full">
       <Link href="/danh-muc" className="hover:text-[var(--color-primary)] transition-colors">
         {locale === 'vi' ? 'Danh mục' : 'Categories'}
@@ -41,14 +60,14 @@ export default async function DealPage({ params }: { params: Promise<{ slug: str
         {locale === 'vi' ? deal.category.nameVi : deal.category.nameEn}
       </Link>
     </div>
-  )
+  ) : null
 
   return (
-    <div className="max-w-[850px] mx-auto flex flex-col gap-2">
-      <Row3Injector content={breadcrumb} />
-      <DealDetail deal={serializedDeal as any} locale={locale} />
+    <div className="max-w-[1100px] mx-auto flex flex-col gap-2">
+      {breadcrumb && <Row3Injector content={breadcrumb} />}
+      <DealDetail deal={serializedDeal as any} locale={locale} initialIsSaved={isSaved} />
       
-      <RelatedDeals categorySlug={deal.category.slug} currentDealId={deal.id} locale={locale} />
+      {deal.category && <RelatedDeals categorySlug={deal.category.slug} currentDealId={deal.id} locale={locale} />}
 
       <CommentThread dealId={deal.id} locale={locale} />
     </div>

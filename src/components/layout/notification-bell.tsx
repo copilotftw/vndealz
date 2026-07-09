@@ -1,127 +1,89 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Bell, Check, CheckCheck } from 'lucide-react'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { getUnreadNotificationCount, getNotifications, markNotificationAsRead, markAllNotificationsAsRead } from '@/server/actions/notifications'
+import { useState } from 'react'
+import { Bell, Mail, Settings, Check, MessageCircle } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { formatDistanceToNow } from 'date-fns'
-import { vi, enUS } from 'date-fns/locale'
-import { useTranslations, useLocale } from 'next-intl'
 
 export function NotificationBell() {
-  const [unreadCount, setUnreadCount] = useState(0)
-  const [notifications, setNotifications] = useState<any[]>([])
-  const [isOpen, setIsOpen] = useState(false)
-  const t = useTranslations('nav')
-  const locale = useLocale()
-
-  // Poll for unread count
-  useEffect(() => {
-    const fetchCount = async () => {
-      try {
-        const count = await getUnreadNotificationCount()
-        setUnreadCount(count)
-      } catch (e) {
-        // user might not be logged in
-      }
-    }
-    
-    fetchCount()
-    const interval = setInterval(fetchCount, 60000) // every 60s
-    return () => clearInterval(interval)
-  }, [])
-
-  // Fetch recent notifications when popover opens
-  useEffect(() => {
-    if (isOpen) {
-      getNotifications(5).then(setNotifications).catch(console.error)
-    }
-  }, [isOpen])
-
-  const handleMarkAsRead = async (e: React.MouseEvent, id: string) => {
-    e.preventDefault() // prevent navigating if it's a link click wrapper
-    await markNotificationAsRead(id)
-    setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n))
-    setUnreadCount(prev => Math.max(0, prev - 1))
-  }
-
-  const handleMarkAll = async () => {
-    await markAllNotificationsAsRead()
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })))
-    setUnreadCount(0)
-  }
+  const [hasUnread, setHasUnread] = useState(true)
+  const [open, setOpen] = useState(false)
+  const [activeTab, setActiveTab] = useState<'alerts' | 'messages'>('alerts')
 
   return (
-    <Popover open={isOpen} onOpenChange={setIsOpen}>
-      <PopoverTrigger render={
-        <Button variant="ghost" className="nav-icon-btn h-9 px-2 xl:px-3 gap-2" title={t('notifications')} />
-      }>
-        <div className="relative flex items-center justify-center">
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger className="nav-icon-btn h-10 px-3 gap-2 flex items-center rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors whitespace-nowrap">
+        <div className="relative flex items-center justify-center shrink-0">
           <Bell className="w-[var(--icon-size)] h-[var(--icon-size)]" />
-          {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1.5 min-w-[18px] h-[18px] rounded-full bg-[var(--color-danger)] text-white text-[10px] font-bold flex items-center justify-center px-1 animate-in zoom-in">
-              {unreadCount > 99 ? '99+' : unreadCount}
-            </span>
+          {hasUnread && (
+            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white dark:border-[var(--color-nav-bg)]" />
           )}
         </div>
-        <span className="hidden xl:inline font-medium text-sm">{t('notifications')}</span>
+        <span className="hidden xl:inline font-bold text-sm whitespace-nowrap">Thông báo</span>
       </PopoverTrigger>
       
-      <PopoverContent align="end" className="w-80 p-0 overflow-hidden" sideOffset={8}>
-        <div className="flex items-center justify-between p-4 border-b bg-muted/30">
-          <h3 className="font-semibold text-sm">{locale === 'vi' ? 'Thông báo' : 'Notifications'}</h3>
-          {unreadCount > 0 && (
-            <Button variant="ghost" size="sm" className="h-auto p-0 text-xs text-primary hover:bg-transparent hover:underline" onClick={handleMarkAll}>
-              <CheckCheck className="w-3 h-3 mr-1" />
-              {locale === 'vi' ? 'Đánh dấu đã đọc' : 'Mark all as read'}
-            </Button>
-          )}
-        </div>
+      <PopoverContent align="end" className="w-[380px] p-0 rounded-2xl overflow-hidden glass-strong shadow-2xl border border-[var(--color-border)]/50 mt-2 z-[60]">
         
-        <div className="max-h-[300px] overflow-y-auto">
-          {notifications.length === 0 ? (
-            <div className="p-8 text-center text-muted-foreground text-sm">
-              {locale === 'vi' ? 'Không có thông báo nào.' : 'No notifications.'}
-            </div>
-          ) : (
-            <div className="flex flex-col">
-              {notifications.map(n => (
-                <Link 
-                  key={n.id} 
-                  href={n.link || '#'} 
-                  onClick={() => { if(!n.read) handleMarkAsRead(null as any, n.id) }}
-                  className={`p-4 border-b last:border-0 hover:bg-muted/50 transition-colors ${!n.read ? 'bg-primary/5' : ''}`}
-                >
-                  <div className="flex justify-between gap-2">
-                    <div className="space-y-1">
-                      <p className={`text-sm ${!n.read ? 'font-semibold text-foreground' : 'text-muted-foreground'}`}>
-                        {n.title}
-                      </p>
-                      <p className="text-xs text-muted-foreground line-clamp-2">
-                        {n.body}
-                      </p>
-                      <p className="text-[10px] text-muted-foreground/80 mt-1">
-                        {formatDistanceToNow(new Date(n.createdAt), { addSuffix: true, locale: locale === 'vi' ? vi : enUS })}
-                      </p>
+        {/* Tabs */}
+        <div className="flex border-b border-[var(--color-border)]/50">
+          <button 
+             onClick={() => setActiveTab('messages')}
+             className={`flex-1 py-3 flex items-center justify-center border-b-2 transition-colors ${activeTab === 'messages' ? 'border-[var(--color-primary)] text-[var(--color-primary)]' : 'border-transparent text-[var(--color-text-muted)] hover:text-current'}`}
+          >
+             <Mail className="w-5 h-5" />
+          </button>
+          <button 
+             onClick={() => setActiveTab('alerts')}
+             className={`flex-1 py-3 flex items-center justify-center border-b-2 transition-colors ${activeTab === 'alerts' ? 'border-[var(--color-primary)] text-[var(--color-primary)]' : 'border-transparent text-[var(--color-text-muted)] hover:text-current'}`}
+          >
+             <Bell className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Toolbar */}
+        <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--color-border)]/30 bg-black/5 dark:bg-white/5">
+           <button className="text-xs font-bold text-[var(--color-primary)] flex items-center gap-1 hover:underline">
+              <Check className="w-3.5 h-3.5" /> Alles als gelesen markieren
+           </button>
+           <div className="flex items-center gap-3">
+              {activeTab === 'messages' && <Mail className="w-4 h-4 text-[var(--color-text-muted)]" />}
+              <Settings className="w-4 h-4 text-[var(--color-text-muted)] cursor-pointer hover:text-current" />
+           </div>
+        </div>
+
+        {/* Content List */}
+        <div className="max-h-[400px] overflow-y-auto no-scrollbar">
+           {activeTab === 'alerts' ? (
+              <div className="divide-y divide-[var(--color-border)]/30">
+                 {[1, 2, 3, 4].map(i => (
+                    <div key={i} className="p-4 flex gap-3 hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer transition-colors">
+                       <div className="w-10 h-10 rounded-full bg-blue-500 shrink-0 text-white flex items-center justify-center font-bold">F</div>
+                       <div className="flex-1 min-w-0">
+                          <p className="text-sm">
+                             Der Deal <strong>Google Pixel 10 Pro 128 GB</strong> dem Du folgst, wurde von <strong>Schorsche</strong> und 147 weiteren kommentiert
+                          </p>
+                          <p className="text-xs text-[var(--color-text-muted)] flex items-center gap-1 mt-1">
+                             <MessageCircle className="w-3 h-3" /> vor 4 h, 34 m
+                          </p>
+                       </div>
                     </div>
-                    {!n.read && (
-                      <div className="w-2 h-2 rounded-full bg-primary shrink-0 mt-1" />
-                    )}
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
-        
-        <div className="p-2 border-t bg-muted/20">
-          <Link href="/thong-bao" onClick={() => setIsOpen(false)}>
-            <Button variant="ghost" className="w-full text-xs h-8">
-              {locale === 'vi' ? 'Xem tất cả thông báo' : 'View all notifications'}
-            </Button>
-          </Link>
+                 ))}
+              </div>
+           ) : (
+              <div className="divide-y divide-[var(--color-border)]/30">
+                 {[1, 2, 3].map(i => (
+                    <div key={i} className="p-4 flex gap-3 hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer transition-colors">
+                       <div className="w-10 h-10 rounded-full bg-green-500 shrink-0 flex items-center justify-center text-white text-xl">🐸</div>
+                       <div className="flex-1 min-w-0">
+                          <div className="flex justify-between items-start">
+                             <h4 className="font-bold text-sm">fabi1</h4>
+                             <span className="text-xs text-[var(--color-text-muted)]">7. Jul</span>
+                          </div>
+                          <p className="text-sm text-[var(--color-text-muted)] truncate mt-0.5">Hi, Werbe dich gerne für curve. Biete dir 3...</p>
+                       </div>
+                    </div>
+                 ))}
+              </div>
+           )}
         </div>
       </PopoverContent>
     </Popover>

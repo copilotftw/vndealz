@@ -8,6 +8,8 @@ import { generateSlug } from '@/lib/utils'
 import { calculateTemperature } from '@/lib/temperature'
 import { revalidatePath } from 'next/cache'
 import { getCategoryWithDescendants } from './category'
+import { getMutedUserIds } from './user'
+import { getSafeUserSettings } from './settings'
 import { matchDealWithAlerts } from '@/lib/alerts/matching-engine'
 import { evaluateGamification } from '@/lib/gamification/engine'
 
@@ -103,7 +105,40 @@ export async function voteDeal(dealId: string, value: 1 | -1) {
   }
   await invalidateCache('deals:*')
   revalidatePath('/[locale]/deal/[slug]')
-  revalidatePath('/[locale]')
+  revalidatePath('/[locale]', 'layout')
+}
+
+export async function toggleSaveDeal(dealId: string) {
+  const s = await getSession()
+  
+  const existingBookmark = await db.bookmark.findUnique({
+    where: {
+      userId_dealId: {
+        userId: s.user.id,
+        dealId
+      }
+    }
+  })
+
+  if (existingBookmark) {
+    await db.bookmark.delete({
+      where: {
+        userId_dealId: {
+          userId: s.user.id,
+          dealId
+        }
+      }
+    })
+    return { saved: false }
+  } else {
+    await db.bookmark.create({
+      data: {
+        userId: s.user.id,
+        dealId
+      }
+    })
+    return { saved: true }
+  }
 }
 
 import { getCached, setCached, invalidateCache } from '@/lib/redis'
@@ -119,8 +154,15 @@ export async function getDeals(opts: {
   const limit = opts.limit || 20
   const skip = (page - 1) * limit
   
+  const mutedUserIds = await getMutedUserIds()
+  const mutedKey = mutedUserIds.length > 0 ? `muted:${mutedUserIds.join(',')}` : 'nomute'
+  
+  const settings = await getSafeUserSettings()
+  const showNsfw = settings.preferences?.showNsfw ?? false
+  const nsfwKey = showNsfw ? 'nsfw' : 'sfw'
+  
   // Create unique cache key for this query
-  const cacheKey = `deals:${opts.sort || 'hot'}:${opts.type || 'all'}:${opts.categorySlug || 'all'}:${page}:${limit}`
+  const cacheKey = `deals:${opts.sort || 'hot'}:${opts.type || 'all'}:${opts.categorySlug || 'all'}:${page}:${limit}:${mutedKey}:${nsfwKey}`
   const cachedData = await getCached<{deals: any[], total: number, pages: number}>(cacheKey)
   if (cachedData) return cachedData
 
@@ -130,6 +172,13 @@ export async function getDeals(opts: {
   if (opts.categorySlug) {
     const catIds = await getCategoryWithDescendants(opts.categorySlug)
     if (catIds.length) where.categoryId = { in: catIds }
+  }
+  if (mutedUserIds.length > 0) {
+    where.userId = { notIn: mutedUserIds }
+  }
+
+  if (!showNsfw) {
+    where.isNsfw = false
   }
 
   let finalDeals: any[] = []

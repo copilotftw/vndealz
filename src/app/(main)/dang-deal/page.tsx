@@ -3,11 +3,12 @@ import { db } from '@/lib/db'
 import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { getLocale } from 'next-intl/server'
+import { getLocale, getTranslations } from 'next-intl/server'
 
 export default async function SubmitDealPage() {
   const session = await auth.api.getSession({ headers: await headers() })
   const locale = await getLocale()
+  const t = await getTranslations('deal')
   
   if (!session?.user) {
     redirect(`/${locale}/dang-nhap`)
@@ -29,12 +30,10 @@ export default async function SubmitDealPage() {
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-bold text-[var(--color-primary)]">
-          {locale === 'vi' ? 'Chia sẻ Deal Mới' : 'Submit a New Deal'}
+          {t('pageTitle')}
         </h1>
         <p className="text-[var(--color-text-muted)]">
-          {locale === 'vi' 
-            ? 'Cùng cộng đồng mua sắm thông minh hơn bằng cách chia sẻ những deal tốt nhất bạn tìm thấy.'
-            : 'Help the community shop smarter by sharing the best deals you find.'}
+          {t('pageDesc')}
         </p>
       </div>
       <DealForm categories={rootCats.map(buildTree)} />

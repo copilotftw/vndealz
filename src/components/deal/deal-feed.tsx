@@ -52,31 +52,15 @@ export async function DealFeed({
     <div className="space-y-[var(--section-gap)]">
       {/* ponytail: tabs moved to navbar row 3 via HeaderContext */}
 
-      <DealList deals={deals as any} locale={locale} userVotes={userVotes} />
-
-      {pages > 1 && (
-        <div className="flex justify-center gap-2 mt-8">
-          {page > 1 && (
-            <Link 
-              href={`?sort=${sort}&page=${page - 1}`}
-              className="px-4 py-2 border border-[var(--color-border)] rounded-[var(--border-radius-md)] hover:bg-[var(--color-primary)]/10 transition-colors bg-[var(--color-surface)]/50"
-            >
-              {t('previous')}
-            </Link>
-          )}
-          <span className="px-4 py-2 text-[var(--color-text-muted)]">
-            {t('page')} {page} / {pages}
-          </span>
-          {page < pages && (
-            <Link 
-              href={`?sort=${sort}&page=${page + 1}`}
-              className="px-4 py-2 border border-[var(--color-border)] rounded-[var(--border-radius-md)] hover:bg-[var(--color-primary)]/10 transition-colors bg-[var(--color-surface)]/50"
-            >
-              {t('next')}
-            </Link>
-          )}
-        </div>
-      )}
+      <DealList 
+        deals={deals as any} 
+        locale={locale} 
+        userVotes={userVotes} 
+        sort={sort}
+        type={type}
+        categorySlug={categorySlug}
+        initialPages={pages}
+      />
     </div>
   )
 }

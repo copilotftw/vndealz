@@ -6,6 +6,9 @@ import { headers } from 'next/headers'
 import { commentSchema } from '@/lib/validations'
 import { revalidatePath } from 'next/cache'
 import { evaluateGamification } from '@/lib/gamification/engine'
+import { getMutedUserIds } from './user'
+import { getSafeUserSettings } from './settings'
+import { sendNotification } from '../services/notification'
 
 async function getSession() {
   const s = await auth.api.getSession({ headers: await headers() })
@@ -37,16 +40,44 @@ export async function createComment(input: { content: string; dealId?: string; p
   
   if (data.dealId) {
     const deal = await db.deal.findUnique({ where: { id: data.dealId } })
-    if (deal) revalidatePath(`/[locale]/deal/${deal.slug}`)
+    if (deal) {
+      const settings = await getSafeUserSettings()
+      if (settings.preferences?.autoFollowCommented) {
+        // Auto follow (bookmark) the deal
+        await db.bookmark.upsert({
+          where: { userId_dealId: { userId: s.user.id, dealId: data.dealId } },
+          create: { userId: s.user.id, dealId: data.dealId },
+          update: {}
+        }).catch(() => {})
+      }
+      
+      // Notify the deal author
+      if (deal.userId !== s.user.id) {
+        await sendNotification({
+          userId: deal.userId,
+          event: 'myDeals.dealCommented',
+          title: 'Bình luận mới về deal của bạn',
+          body: `${s.user.name} đã bình luận: "${data.content.substring(0, 50)}..."`,
+          link: `/deal/${deal.slug}#comment-${comment.id}`
+        })
+      }
+      
+      revalidatePath(`/[locale]/deal/${deal.slug}`)
+    }
   }
   
   return comment
 }
 
 export async function getComments(dealId: string) {
+  const mutedUserIds = await getMutedUserIds()
+  
   // Fetch comments and build tree
   const comments = await db.comment.findMany({
-    where: { dealId },
+    where: { 
+      dealId,
+      ...(mutedUserIds.length > 0 && { userId: { notIn: mutedUserIds } })
+    },
     include: {
       user: { select: { id: true, name: true, avatar: true, tier: true } }
     },

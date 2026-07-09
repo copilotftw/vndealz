@@ -72,6 +72,7 @@ export default async function RootLayout({
         <style dangerouslySetInnerHTML={{ __html: themeCSS }} />
       </head>
       <body
+        className="overflow-x-hidden"
         style={{
           background: 'var(--color-bg)',
           color: 'var(--color-text)',

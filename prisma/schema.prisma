@@ -20,9 +20,11 @@ model User {
   role          String   @default("USER") // USER | MODERATOR | ADMIN
   points        Int      @default(0)
   tier          String   @default("BRONZE") // BRONZE | SILVER | GOLD | DIAMOND
-  locale        String   @default("vi")
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  locale               String   @default("vi")
+  preferences          Json?
+  notificationSettings Json?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 
   // Gamification stats
   lastLoginAt DateTime?
@@ -44,6 +46,9 @@ model User {
   reports       Report[]
   sessions      Session[]
   accounts      Account[]
+  topicSubscriptions TopicSubscription[]
+  mutedUsers    MutedUser[]      @relation("MutedBy")
+  mutedBy       MutedUser[]      @relation("MutedUser")
 }
 
 model Session {
@@ -107,13 +112,16 @@ model Deal {
   viewCount    Int       @default(0)
   clickCount   Int       @default(0)
   blurHash     String?   @db.Text
+  isNsfw       Boolean   @default(false)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
   userId     String
   user       User     @relation(fields: [userId], references: [id])
-  categoryId String
-  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id])
+  discussionCategoryId String?
+  discussionCategory   DiscussionCategory? @relation(fields: [discussionCategoryId], references: [id])
 
   votes        Vote[]
   comments     Comment[]
@@ -146,6 +154,25 @@ model Category {
 
   deals      Deal[]
   dealAlerts DealAlert[]
+  topicSubscriptions TopicSubscription[]
+}
+
+// ─── FORUM DISCUSSION CATEGORIES (separate hierarchy) ───
+
+model DiscussionCategory {
+  id       String               @id @default(cuid())
+  nameVi   String
+  nameEn   String
+  slug     String               @unique
+  icon     String?
+  parentId String?
+  depth    Int                  @default(0)
+  order    Int                  @default(0)
+  path     String?              @db.VarChar(500)
+  parent   DiscussionCategory?  @relation("DiscussionCategoryHierarchy", fields: [parentId], references: [id], onDelete: Restrict)
+  children DiscussionCategory[] @relation("DiscussionCategoryHierarchy")
+
+  deals    Deal[]
 }
 
 // ── NEW MODELS FOR FUTURE PHASES ──
@@ -222,6 +249,17 @@ model DealImage {
   createdAt DateTime @default(now())
 
   @@index([dealId, order])
+}
+
+model TopicSubscription {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, categoryId])
 }
 
 model Follow {
@@ -387,6 +425,19 @@ model Report {
 
   userId String
   user   User   @relation(fields: [userId], references: [id])
+}
+
+model MutedUser {
+  id          String   @id @default(cuid())
+  muterId     String
+  mutedId     String
+  createdAt   DateTime @default(now())
+
+  muter User @relation("MutedBy", fields: [muterId], references: [id], onDelete: Cascade)
+  muted User @relation("MutedUser", fields: [mutedId], references: [id], onDelete: Cascade)
+
+  @@unique([muterId, mutedId])
+  @@index([mutedId])
 }
 
 // ─── MONETIZATION ───

@@ -90,6 +90,38 @@ export async function matchDealWithAlerts(dealId: string) {
     }
   }
 
+  // Check followers of the deal author
+  const followers = await db.follow.findMany({
+    where: { followingId: deal.userId },
+    include: { follower: true }
+  })
+
+  for (const follow of followers) {
+    if (notifiedUserIds.has(follow.followerId)) continue
+    
+    notificationsToCreate.push({
+      userId: follow.followerId,
+      type: 'DEAL_ALERT',
+      title: `Deal mới từ người bạn theo dõi: ${deal.title}`,
+      body: `Một người bạn đang theo dõi vừa đăng deal mới. Nhấn để xem ngay!`,
+      link: `/deal/${deal.slug}`,
+      channel: 'in-app',
+    })
+    notifiedUserIds.add(follow.followerId)
+    
+    // Send email alert for follower
+    if (follow.follower.email) {
+      emailsToSend.push({
+        to: follow.follower.email,
+        keyword: 'Theo dõi',
+        dealTitle: deal.title,
+        dealUrl: `${process.env.BETTER_AUTH_URL}/deal/${deal.slug}`,
+        price: deal.price ? Number(deal.price) : 0,
+        userName: follow.follower.name || 'User'
+      })
+    }
+  }
+
   // Insert notifications in bulk
   if (notificationsToCreate.length > 0) {
     await db.notification.createMany({

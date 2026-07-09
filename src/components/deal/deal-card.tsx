@@ -4,6 +4,7 @@ import { Bookmark, MessageCircle, ExternalLink } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
+import { UserHoverCard } from '@/components/profile/user-hover-card'
 
 type DealCardProps = {
   deal: {
@@ -98,13 +99,21 @@ export function DealCard({ deal, locale, index = 0, userVote = 0 }: DealCardProp
             </span>
           )}
           {deal.user?.name && (
-            <span className="deal-card-author">
-              <img
-                src={deal.user.avatar || deal.user.image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(deal.user.name!)}`}
-                width={16} height={16} alt="" className="rounded-full inline-block align-text-bottom"
-              />
-              {' '}<strong className="text-[var(--color-text)]">{deal.user.name}</strong>
-            </span>
+            <UserHoverCard user={{
+              name: deal.user.name,
+              avatar: deal.user.avatar || deal.user.image,
+              tier: (deal.user as any).tier,
+              createdAt: new Date(), // We don't have createdAt in the deal query currently, will pass dummy for now or update query later
+              stats: { deals: 0, comments: 0 } // dummy stats for now
+            }}>
+              <span className="deal-card-author">
+                <img
+                  src={deal.user.avatar || deal.user.image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(deal.user.name!)}`}
+                  width={16} height={16} alt="" className="rounded-full inline-block align-text-bottom"
+                />
+                {' '}<strong className="text-[var(--color-text)]">{deal.user.name}</strong>
+              </span>
+            </UserHoverCard>
           )}
         </div>
 
