@@ -42,3 +42,10 @@ next-env.d.ts
 
 # prisma generated client
 /src/generated/
+
+# agent
+.agent/
+
+# claude code local config
+.claude/
+

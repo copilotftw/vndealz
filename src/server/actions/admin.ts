@@ -4,6 +4,7 @@ import { db } from '@/lib/db'
 import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
 import { revalidatePath } from 'next/cache'
+import { routes } from '@/lib/routes'
 
 async function requireAdmin() {
   const s = await auth.api.getSession({ headers: await headers() })
@@ -83,8 +84,8 @@ export async function moderateDeal(dealId: string, action: 'approve' | 'reject',
     matchDealWithAlerts(deal.id).catch(console.error)
   }
   
-  revalidatePath('/[locale]/admin/moderation')
-  revalidatePath('/[locale]')
+  revalidatePath(routes.admin.moderation)
+  revalidatePath(routes.home)
   return deal
 }
 
@@ -113,7 +114,7 @@ export async function banUser(userId: string) {
     where: { id: userId },
     data: { role: 'BANNED' }
   })
-  revalidatePath('/[locale]/admin/users')
+  revalidatePath(routes.admin.users)
 }
 
 export async function promoteUser(userId: string, role: 'MODERATOR' | 'ADMIN') {
@@ -122,5 +123,5 @@ export async function promoteUser(userId: string, role: 'MODERATOR' | 'ADMIN') {
     where: { id: userId },
     data: { role }
   })
-  revalidatePath('/[locale]/admin/users')
+  revalidatePath(routes.admin.users)
 }

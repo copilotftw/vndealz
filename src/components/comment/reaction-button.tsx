@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import { useTranslations } from 'next-intl'
 import { reactToComment } from '@/server/actions/comment'
 import { ThumbsUp } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
@@ -8,6 +9,7 @@ import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 
 export function ReactionButton({ commentId, initialCount }: { commentId: string; initialCount: number }) {
+  const t = useTranslations('comment')
   const [count, setCount] = useState(initialCount)
   const [isReacted, setIsReacted] = useState(false)
   const [isPending, startTransition] = useTransition()
@@ -16,7 +18,7 @@ export function ReactionButton({ commentId, initialCount }: { commentId: string;
 
   const handleReact = () => {
     if (!user) {
-      toast.error('Vui lòng đăng nhập để đánh giá')
+      toast.error(t('signInToReact'))
       router.push('/dang-nhap')
       return
     }
@@ -32,7 +34,7 @@ export function ReactionButton({ commentId, initialCount }: { commentId: string;
       } catch (err) {
         setCount(prev => prev - 1)
         setIsReacted(false)
-        toast.error('Có lỗi xảy ra')
+        toast.error(t('reactionError'))
       }
     })
   }

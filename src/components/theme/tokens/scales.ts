@@ -1,43 +1,65 @@
 // ── SCALE PRESETS ────────────────────────────────────────────────
-// Each scale defines sizing AND a column offset
-// Layouts with grid use: max(1, base_columns + column_offset)
+// Two linear multipliers drive all derived sizing.
+// --scale-factor: 0.125 step per level (fonts, radii, etc.)
+// --space-unit:   2px step per level (spacing, gaps)
+//
+// Font sizes and gaps are NOT stored here — they are derived in
+// tokens/primitives.css via calc() so every persona inherits them
+// automatically without server-side enumeration.
+//
+// Shell chrome (nav-height, avatar, button, icon) kept as discrete
+// linear values since they are shell-structural, not content-scaling.
 
 export const SCALE_PRESETS = {
   xs: {
-    '--font-size-xs': '0.625rem', '--font-size-sm': '0.6875rem', '--font-size-base': '0.75rem',
-    '--font-size-lg': '0.875rem', '--font-size-xl': '1rem', '--font-size-2xl': '1.25rem',
-    '--card-gap': '0.375rem', '--section-gap': '0.75rem',
-    '--nav-height': '40px', '--avatar-size': '24px', '--button-height': '28px', '--icon-size': '14px',
-    '--grid-column-offset': '2', // more columns at small scale
+    '--scale-factor': '0.75',
+    '--space-unit': '12px',
+    '--nav-height': '40px',
+    '--avatar-size': '24px',
+    '--button-height': '28px',
+    '--icon-size': '14px',
   },
   sm: {
-    '--font-size-xs': '0.6875rem', '--font-size-sm': '0.75rem', '--font-size-base': '0.8125rem',
-    '--font-size-lg': '0.9375rem', '--font-size-xl': '1.125rem', '--font-size-2xl': '1.5rem',
-    '--card-gap': '0.5rem', '--section-gap': '1rem',
-    '--nav-height': '48px', '--avatar-size': '28px', '--button-height': '32px', '--icon-size': '16px',
-    '--grid-column-offset': '1',
+    '--scale-factor': '0.875',
+    '--space-unit': '14px',
+    '--nav-height': '48px',
+    '--avatar-size': '28px',
+    '--button-height': '32px',
+    '--icon-size': '16px',
   },
   md: {
-    '--font-size-xs': '0.75rem', '--font-size-sm': '0.8125rem', '--font-size-base': '0.875rem',
-    '--font-size-lg': '1rem', '--font-size-xl': '1.25rem', '--font-size-2xl': '1.75rem',
-    '--card-gap': '0.75rem', '--section-gap': '1.25rem',
-    '--nav-height': '56px', '--avatar-size': '32px', '--button-height': '36px', '--icon-size': '18px',
-    '--grid-column-offset': '0', // base columns
+    '--scale-factor': '1',
+    '--space-unit': '16px',
+    '--nav-height': '56px',
+    '--avatar-size': '32px',
+    '--button-height': '36px',
+    '--icon-size': '18px',
   },
   lg: {
-    '--font-size-xs': '0.8125rem', '--font-size-sm': '0.875rem', '--font-size-base': '1rem',
-    '--font-size-lg': '1.125rem', '--font-size-xl': '1.5rem', '--font-size-2xl': '2rem',
-    '--card-gap': '1rem', '--section-gap': '1.5rem',
-    '--nav-height': '64px', '--avatar-size': '40px', '--button-height': '42px', '--icon-size': '20px',
-    '--grid-column-offset': '-1', // fewer columns at large scale
+    '--scale-factor': '1.125',
+    '--space-unit': '18px',
+    '--nav-height': '64px',
+    '--avatar-size': '40px',
+    '--button-height': '42px',
+    '--icon-size': '20px',
   },
   xl: {
-    '--font-size-xs': '0.875rem', '--font-size-sm': '1rem', '--font-size-base': '1.125rem',
-    '--font-size-lg': '1.25rem', '--font-size-xl': '1.75rem', '--font-size-2xl': '2.5rem',
-    '--card-gap': '1.25rem', '--section-gap': '2rem',
-    '--nav-height': '72px', '--avatar-size': '48px', '--button-height': '48px', '--icon-size': '24px',
-    '--grid-column-offset': '-2',
+    '--scale-factor': '1.25',
+    '--space-unit': '20px',
+    '--nav-height': '72px',
+    '--avatar-size': '48px',
+    '--button-height': '48px',
+    '--icon-size': '24px',
   },
 } as const
 
 export type ScaleKey = keyof typeof SCALE_PRESETS
+
+// Space unit values in px (numeric) for server-side persona-space-unit computation.
+export const SPACE_UNIT_PX: Record<ScaleKey, number> = {
+  xs: 12,
+  sm: 14,
+  md: 16,
+  lg: 18,
+  xl: 20,
+}

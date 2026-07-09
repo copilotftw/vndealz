@@ -3,7 +3,8 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useTranslations } from 'next-intl'
-import { Home, Tag, PlusCircle, Bell, User, AlarmClock } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Home, PlusCircle, Bell, User, AlarmClock } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
 import { NotificationBell } from './notification-bell'
 
@@ -11,13 +12,25 @@ export function MobileNav() {
   const pathname = usePathname()
   const t = useTranslations('nav')
   const { user } = useAuth()
+  const [profileHref, setProfileHref] = useState('/dang-nhap')
+  const [profileLabel, setProfileLabel] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (user) {
+      setProfileHref(`/ho-so/${user.name}`)
+      setProfileLabel(t('profile'))
+    } else {
+      setProfileHref('/dang-nhap')
+      setProfileLabel(null)
+    }
+  }, [user, t])
 
   const navItems = [
     { href: '/', icon: Home, label: t('home') },
     { href: '/canh-bao-deal', icon: AlarmClock, label: t('alarms') },
     { href: '/dang', icon: PlusCircle, label: t('submit'), special: true },
     { href: '/thong-bao', icon: Bell, label: t('alerts') },
-    { href: user ? `/ho-so/${user.name}` : '/dang-nhap', icon: User, label: user ? t('profile') : t('login') },
+    { href: profileHref, icon: User, label: profileLabel ?? t('login') },
   ]
 
   return (

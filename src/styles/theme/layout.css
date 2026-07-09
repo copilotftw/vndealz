@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════ */
-/* NAV SCROLL ANIMATION — bouncy glass   */
+/* NAV SCROLL ANIMATION                   */
 /* ══════════════════════════════════════ */
 .nav-scroll-container {
   transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
@@ -7,306 +7,235 @@
               box-shadow 0.3s ease;
   will-change: transform, opacity;
 }
-.nav-visible {
-  transform: translateY(0);
-  opacity: 1;
-}
-.nav-hidden {
-  transform: translateY(-110%);
-  opacity: 0;
-  pointer-events: none;
-}
-.nav-scrolled .site-nav,
-.nav-scrolled.site-nav {
-  box-shadow: 0 4px 30px rgba(0,0,0,0.08);
-}
-.nav-at-top .site-nav,
-.nav-at-top.site-nav {
-  box-shadow: none;
-}
+.nav-visible { transform: translateY(0); opacity: 1; }
+.nav-hidden { transform: translateY(-110%); opacity: 0; pointer-events: none; }
+.nav-scrolled .site-nav, .nav-scrolled.site-nav { box-shadow: 0 4px 30px rgba(0,0,0,0.08); }
+.nav-at-top .site-nav, .nav-at-top.site-nav { box-shadow: none; }
 
 /* ══════════════════════════════════════ */
-/* DEAL GRID                             */
+/* DEFAULT DEAL GRID                      */
 /* ══════════════════════════════════════ */
 .deal-grid {
   display: grid;
-  grid-template-columns: repeat(var(--grid-columns), 1fr);
+  grid-template-columns: repeat(var(--grid-columns, 1), 1fr);
   gap: var(--card-gap);
+  width: 100%;
 }
-/* Tablet */
 @media (max-width: 1024px) {
-  .deal-grid {
-    grid-template-columns: repeat(var(--grid-columns-tablet), 1fr);
-  }
+  .deal-grid { grid-template-columns: repeat(var(--grid-columns-tablet, 1), 1fr); }
 }
-/* Large phone */
 @media (max-width: 768px) {
-  .deal-grid {
-    grid-template-columns: repeat(var(--grid-columns-mobile), 1fr);
-    gap: 0.5rem;
-  }
-}
-/* Small phone */
-@media (max-width: 480px) {
-  .deal-grid {
-    grid-template-columns: repeat(var(--grid-columns-mobile), 1fr);
-    gap: 0.375rem;
-  }
+  .deal-grid { grid-template-columns: repeat(var(--grid-columns-mobile, 1), 1fr); gap: var(--space-2, 0.5rem); }
 }
 
-/* ══════════════════════════════════════ */
-/* LAYOUT: MODERN — Glassmorphism        */
-/* ══════════════════════════════════════ */
-[data-layout="modern"] .deal-card {
-  backdrop-filter: blur(12px) saturate(160%);
-  border: 1px solid rgba(255,255,255,0.2);
-}
-.dark [data-layout="modern"] .deal-card {
-  border: 1px solid rgba(255,255,255,0.08);
-}
-[data-layout="modern"] .deal-card:hover {
-  transform: translateY(-4px) scale(1.01);
-  box-shadow: 0 16px 48px rgba(0,0,0,0.15);
-}
-[data-layout="modern"] .deal-card-image {
-  width: 100%;
-  aspect-ratio: 4/3;
-  border-radius: 0;
-}
-[data-layout="modern"] .deal-card-content {
-  padding: 0.875rem;
-}
-[data-layout="modern"] .deal-card-title {
-  -webkit-line-clamp: 2;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-[data-layout="modern"] .deal-card-description { display: none; }
-
-/* ══════════════════════════════════════ */
-/* LAYOUT: MYDEALZ — Deal list feed      */
-/* ══════════════════════════════════════ */
-[data-layout="mydealz"] .deal-card-image {
-  width: 11em;
-  height: 11em;
-  aspect-ratio: 1/1;
-  border-radius: var(--border-radius-sm);
-  margin: 0.75rem 0 0.75rem 0.75rem;
-}
-[data-layout="mydealz"] .deal-card-content {
-  padding: 0.75rem;
-  gap: 6px;
-}
-[data-layout="mydealz"] .deal-card-title {
-  font-size: var(--font-size-xl);
-  font-weight: 700;
-}
-[data-layout="mydealz"] .deal-card-price {
-  font-size: var(--font-size-xl);
-}
-[data-layout="mydealz"] .deal-card-description { display: block; }
-[data-layout="mydealz"] .deal-card-footer {
-  border-top: 1px solid color-mix(in srgb, var(--color-border) 40%, transparent);
-  padding-top: 8px;
-}
-/* MyDealz mobile: smaller image */
-@media (max-width: 640px) {
-  [data-layout="mydealz"] .deal-card-image {
-    width: 100px;
-    height: 100px;
-    margin: 0.5rem 0 0.5rem 0.5rem;
-  }
-  [data-layout="mydealz"] .deal-card-title { font-size: var(--font-size-base); }
-  [data-layout="mydealz"] .deal-card-price { font-size: var(--font-size-base); }
-  [data-layout="mydealz"] .deal-card-description { display: none; }
-}
-
-/* ══════════════════════════════════════ */
-/* LAYOUT: SHOPEE — Dense product grid   */
-/* ══════════════════════════════════════ */
-[data-layout="shopee"] .deal-card {
-  border-radius: 0.125rem;
-}
-[data-layout="shopee"] .deal-card:hover {
-  transform: translateY(-1px);
-  border-color: var(--color-primary);
-}
-[data-layout="shopee"] .deal-card-image {
-  width: 100%;
-  aspect-ratio: 1/1;
-}
-[data-layout="shopee"] .deal-card-content {
-  padding: 0.5rem;
-  gap: 4px;
-}
-[data-layout="shopee"] .deal-card-title {
-  font-size: var(--font-size-sm);
-  -webkit-line-clamp: 2;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-[data-layout="shopee"] .deal-card-price {
-  font-size: var(--font-size-lg);
-  color: var(--color-primary);
-}
-[data-layout="shopee"] .deal-card-meta-top { display: none; }
-[data-layout="shopee"] .deal-card-meta-row { display: none; }
-[data-layout="shopee"] .deal-card-description { display: none; }
-[data-layout="shopee"] .deal-card-footer { display: none; }
-
-/* ══════════════════════════════════════ */
-/* LAYOUT: ALIEXPRESS — Clean white grid */
-/* ══════════════════════════════════════ */
-[data-layout="aliexpress"] .deal-card {
-  border: 1px solid transparent;
-  box-shadow: none;
-}
-[data-layout="aliexpress"] .deal-card:hover {
-  border-color: var(--color-border);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-}
-[data-layout="aliexpress"] .deal-card-image {
-  width: 100%;
-  aspect-ratio: 1/1;
-}
-[data-layout="aliexpress"] .deal-card-content {
-  padding: 0.625rem;
-  gap: 4px;
-}
-[data-layout="aliexpress"] .deal-card-title {
-  font-size: var(--font-size-sm);
-  -webkit-line-clamp: 2;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-[data-layout="aliexpress"] .deal-card-price {
-  font-size: var(--font-size-lg);
-  color: var(--color-danger);
-}
-[data-layout="aliexpress"] .deal-card-meta-top { flex-direction: column; align-items: flex-start; }
-[data-layout="aliexpress"] .deal-card-meta-row { display: none; }
-[data-layout="aliexpress"] .deal-card-description { display: none; }
-[data-layout="aliexpress"] .deal-card-footer { display: none; }
-
-/* ══════════════════════════════════════ */
-/* LAYOUT: AMAZON — Utilitarian grid     */
-/* ══════════════════════════════════════ */
-[data-layout="amazon"] .deal-card-image {
-  width: 100%;
-  aspect-ratio: 1/1;
-  padding: 0.75rem;
-  background: var(--color-bg);
-}
-[data-layout="amazon"] .deal-card-content {
-  padding: 0.625rem;
-  gap: 4px;
-}
-[data-layout="amazon"] .deal-card-title {
-  font-size: var(--font-size-sm);
-  -webkit-line-clamp: 2;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  color: var(--color-text);
-}
-[data-layout="amazon"] .deal-card:hover .deal-card-title {
-  color: var(--color-primary-hover);
-  text-decoration: underline;
-}
-[data-layout="amazon"] .deal-card-price {
-  font-size: var(--font-size-xl);
-  font-weight: 400;
-  color: var(--color-text);
-}
-[data-layout="amazon"] .deal-card-meta-top { display: none; }
-[data-layout="amazon"] .deal-card-description { display: none; }
-[data-layout="amazon"] .deal-card-footer { display: none; }
-
-/* ══════════════════════════════════════ */
-/* LAYOUT: MINIMALIST — Text density     */
-/* ══════════════════════════════════════ */
-[data-layout="minimalist"] .deal-card {
-  border-bottom: 1px solid var(--color-border);
-  border-radius: 0;
-  padding: 0.625rem 0;
-  gap: 0.75rem;
-}
-[data-layout="minimalist"] .deal-card:hover {
-  transform: none;
-  background: color-mix(in srgb, var(--color-primary) 5%, transparent);
-}
-[data-layout="minimalist"] .deal-card-image {
-  width: 4.5em;
-  height: 4.5em;
-  aspect-ratio: 1/1;
-  border-radius: var(--border-radius-sm);
-  flex-shrink: 0;
-}
-[data-layout="minimalist"] .deal-card-content {
+/* PULSE — editorial mosaic: full-bleed hero + 2-up halves, hairline gap */
+[data-nav="pulse-overlay"] .deal-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: 55dvh;
+  gap: 3px;
   padding: 0;
-  gap: 2px;
 }
-[data-layout="minimalist"] .deal-card-title {
-  font-size: var(--font-size-base);
-  font-weight: 500;
+/* Every 3rd+1 item (1, 4, 7…) is a full-width hero */
+[data-nav="pulse-overlay"] .deal-grid > *:nth-child(3n+1) {
+  grid-column: span 2;
 }
-[data-layout="minimalist"] .deal-card-price {
-  font-size: var(--font-size-base);
+@media (max-width: 640px) {
+  [data-nav="pulse-overlay"] .deal-grid {
+    grid-template-columns: 1fr;
+    grid-auto-rows: 60dvh;
+  }
+  [data-nav="pulse-overlay"] .deal-grid > *:nth-child(3n+1) {
+    grid-column: span 1;
+  }
 }
-[data-layout="minimalist"] .deal-card-description { display: none; }
-[data-layout="minimalist"] .deal-card-footer { display: none; }
-[data-layout="minimalist"] .deal-card-coupon { display: none; }
-[data-layout="minimalist"] .deal-card-meta-top {
-  justify-content: flex-start;
-  gap: 12px;
+/* Flush feed wrapper — no outer padding/spacing in mosaic */
+[data-nav="pulse-overlay"] main > * { margin: 0; padding: 0; }
+[data-nav="pulse-overlay"] main > * > * { margin: 0; }
+
+/* Hero cards get larger title */
+[data-nav="pulse-overlay"] .deal-grid > *:nth-child(3n+1) .pulse-card h3 {
+  font-size: 1.5rem;
+  -webkit-line-clamp: 2;
+}
+[data-nav="pulse-overlay"] .deal-grid > *:nth-child(3n+2) .pulse-card h3,
+[data-nav="pulse-overlay"] .deal-grid > *:nth-child(3n+3) .pulse-card h3 {
+  font-size: 0.95rem;
+  -webkit-line-clamp: 2;
+}
+/* Half cards: tighter padding, hide merchant label */
+[data-nav="pulse-overlay"] .deal-grid > *:nth-child(3n+2) .pulse-card [data-pulse-bottom],
+[data-nav="pulse-overlay"] .deal-grid > *:nth-child(3n+3) .pulse-card [data-pulse-bottom] {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+[data-nav="pulse-overlay"] .deal-grid > *:nth-child(3n+2) .pulse-card [data-pulse-merchant],
+[data-nav="pulse-overlay"] .deal-grid > *:nth-child(3n+3) .pulse-card [data-pulse-merchant] {
+  display: none;
+}
+
+/* PULSE — cinematic deal detail */
+[data-nav="pulse-overlay"] .deal-detail-root {
+  flex-direction: column !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+/* Hero image: full-bleed, tall, cover */
+[data-nav="pulse-overlay"] [data-detail-hero] {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 65dvh;
+  padding: 0 !important;
+  background: #000 !important;
+  border: none !important;
+}
+[data-nav="pulse-overlay"] [data-detail-image] {
+  background: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  aspect-ratio: unset !important;
+  height: 100% !important;
+}
+[data-nav="pulse-overlay"] [data-detail-image] img {
+  object-fit: cover !important;
+  padding: 0 !important;
+}
+/* Gradient overlay from bottom */
+[data-nav="pulse-overlay"] [data-detail-hero]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 35%, rgba(0,0,0,0.85) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+/* Hide enlarge button and thumbnails in hero */
+[data-nav="pulse-overlay"] [data-detail-hero] button,
+[data-nav="pulse-overlay"] [data-detail-hero] > div:first-child:not([data-detail-image]) {
+  display: none;
+}
+/* Content section: dark glass */
+[data-nav="pulse-overlay"] [data-detail-content] {
+  background: rgba(8, 8, 16, 0.96) !important;
+  padding: 1.5rem !important;
+}
+/* Sibling cards below: dark, no gap */
+[data-nav="pulse-overlay"] .deal-detail-root ~ div {
+  border-radius: 0 !important;
+  border-left: none !important;
+  border-right: none !important;
+  background: rgba(8, 8, 16, 0.96) !important;
+  border-color: rgba(255,255,255,0.07) !important;
+  margin-top: 1px;
+}
+
+/* ATLAS — true masonry via CSS multi-column (variable-height packing) */
+[data-layout="atlas"] .deal-grid {
+  display: block;
+  column-count: var(--grid-columns, 3);
+  column-gap: var(--card-gap);
+}
+@media (max-width: 1024px) {
+  [data-layout="atlas"] .deal-grid { column-count: var(--grid-columns-tablet, 2); }
+}
+@media (max-width: 768px) {
+  [data-layout="atlas"] .deal-grid { column-count: var(--grid-columns-mobile, 1); }
+}
+[data-layout="atlas"] .deal-grid > * {
+  display: inline-block;
+  width: 100%;
+  margin-bottom: var(--card-gap);
+  break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+}
+
+/* ══════════════════════════════════════ */
+/* LAYOUT: MYDEALZ (UNTOUCHED)           */
+/* ══════════════════════════════════════ */
+[data-layout="mydealz"] .deal-card { display: flex; flex-direction: row; border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); }
+[data-layout="mydealz"] .deal-card-image {
+  width: 11em; height: 11em; aspect-ratio: 1/1; border-radius: var(--border-radius-sm); margin: 0.75rem 0 0.75rem 0.75rem;
+}
+[data-layout="mydealz"] .deal-card-content { padding: 0.75rem; display: flex; flex-direction: column; gap: 6px; width: 100%; }
+[data-layout="mydealz"] .deal-card-title { font-size: var(--font-size-xl); font-weight: 700; }
+[data-layout="mydealz"] .deal-card-price { font-size: var(--font-size-xl); }
+[data-layout="mydealz"] .deal-card-description { display: block; }
+[data-layout="mydealz"] .deal-card-footer { border-top: 1px solid color-mix(in srgb, var(--color-border) 40%, transparent); padding-top: 8px; }
+@media (max-width: 640px) {
+  [data-layout="mydealz"] .deal-card-image { width: 6.25rem; height: 6.25rem; margin: 0.5rem 0 0.5rem 0.5rem; }
+  [data-layout="mydealz"] .deal-card-title, [data-layout="mydealz"] .deal-card-price { font-size: var(--font-size-base); }
+  [data-layout="mydealz"] .deal-card-description { display: none; }
 }
 
 /* ══════════════════════════════════════ */
 /* SIDEBAR & CONTENT                     */
 /* ══════════════════════════════════════ */
-.site-sidebar {
-  width: var(--sidebar-width);
-  display: var(--sidebar-display);
-  flex-shrink: 0;
-}
-.site-content {
-  max-width: var(--content-max-width);
-  margin: 0 auto;
-  width: 100%;
-}
-/* Hide sidebar on tablet and below */
-@media (max-width: 1024px) {
-  .site-sidebar { display: none !important; }
-}
+.site-sidebar { width: var(--sidebar-width); display: var(--sidebar-display); flex-shrink: 0; transition: width 0.3s; }
+.site-content { max-width: var(--content-max-width); margin: 0 auto; width: 100%; transition: max-width 0.3s; }
+@media (max-width: 1024px) { .site-sidebar { display: none !important; } }
+@media (min-width: 769px) and (max-width: 1024px) { .site-content { padding-left: 1rem; padding-right: 1rem; } }
+@media (max-width: 768px) { .site-content { padding-left: 0.5rem; padding-right: 0.5rem; } }
+
+.nav-seamless { border-bottom: none !important; }
+.seamless-header { background-color: var(--color-nav-bg); margin-top: calc(-1 * var(--section-gap)); padding-top: calc(var(--section-gap) + 1rem); width: 100vw; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; }
 
 /* ══════════════════════════════════════ */
-/* TABLET REFINEMENTS (768-1024)         */
+/* SHELL BACKGROUND VARIANTS              */
+/* data-bg set by AppShell on root div    */
 /* ══════════════════════════════════════ */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .site-content { padding-left: 1rem; padding-right: 1rem; }
+[data-bg="flat"],
+[data-bg="neutral"] {
+  background-color: var(--color-bg);
 }
 
-/* ══════════════════════════════════════ */
-/* PHONE REFINEMENTS (< 768)             */
-/* ══════════════════════════════════════ */
-@media (max-width: 768px) {
-  .site-content { padding-left: 0.5rem; padding-right: 0.5rem; }
-}/* Seamless Integration Utility */
-.nav-seamless {
-  border-bottom: none !important;
+[data-bg="black"] {
+  background-color: #000;
+  color-scheme: dark;
 }
 
-.seamless-header {
-  background-color: var(--color-nav-bg);
-  margin-top: calc(-1 * var(--section-gap));
-  padding-top: calc(var(--section-gap) + 1rem);
-  width: 100vw;
-  position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
+/* Gradient mesh — primary/secondary haze over page bg */
+[data-bg="mesh"] {
+  background-color: var(--color-bg);
+  background-image:
+    radial-gradient(ellipse at 15% 15%, color-mix(in srgb, var(--color-primary) 10%, transparent), transparent 55%),
+    radial-gradient(ellipse at 85% 80%, color-mix(in srgb, var(--color-secondary) 8%, transparent), transparent 55%);
+  background-attachment: fixed;
+}
+
+/* Warm paper — subtle off-white grain texture */
+[data-bg="paper"] {
+  background-color: var(--color-bg);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  background-attachment: fixed;
+}
+
+/* Shell nav/sidebar/footer data attributes for CSS targeting in Phase 5 */
+[data-nav="hidden"] .site-nav { display: none; }
+[data-sidebar="none"] .site-sidebar { display: none !important; }
+
+/* ══════════════════════════════════════ */
+/* VIEW TRANSITIONS                       */
+/* ══════════════════════════════════════ */
+
+/* Persona switch — cross-fade the whole page */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 300ms;
+  animation-timing-function: ease-in-out;
+}
+
+/* Deal card + detail — named so feed→detail navigations animate the shared element */
+.deal-card-root,
+.deal-detail-root {
+  view-transition-name: var(--vt-name, none);
+}
+
+/* Reduced-motion: kill all view transitions */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
 }

@@ -46,11 +46,11 @@ export const discussionCategorySchema = z.object({
 })
 
 export const themeSchema = z.object({
-  layout: z.enum(['modern', 'minimalist', 'mydealz', 'aliexpress', 'shopee', 'amazon']),
+  layout: z.enum(['mydealz', 'prism', 'ledger', 'vitrine', 'pulse', 'atlas']),
   scale: z.enum(['xs', 'sm', 'md', 'lg', 'xl']),
   colorScheme: z.enum([
-    'default', 'dark-orange', 'ocean', 'forest', 'sunset', 'midnight',
-    'rose', 'monochrome', 'tet', 'christmas', 'mid-autumn', 'national-day',
+    'default', 'midnight', 'graphite', 'azure', 'emerald', 'amber',
+    'plum', 'rose', 'teal', 'sand', 'forest', 'crimson', 'tet', 'christmas',
   ]),
   customCss: z.string().max(10000).nullable().optional(),
 })
@@ -71,3 +71,53 @@ export const adSchema = z.object({
   startsAt: z.date().optional(),
   endsAt: z.date().optional(),
 })
+
+export const preferencesSchema = z.object({
+  defaultLanding: z.enum(['hot', 'new', 'trending']).default('hot'),
+  endlessScroll: z.boolean().default(true),
+  showNsfw: z.boolean().default(false),
+  autoFollowCommented: z.boolean().default(false),
+  allowOthersToFollow: z.boolean().default(true),
+  widgets: z.object({
+    showActivity: z.boolean().default(true),
+    showHottest: z.boolean().default(true),
+    showPopularCategories: z.boolean().default(false),
+    showTopVouchers: z.boolean().default(false),
+    showDiscussions: z.boolean().default(true),
+    showLatestNewsHome: z.boolean().default(false),
+    showLatestNewsCategories: z.boolean().default(false),
+  }).optional(),
+}).partial()
+
+export const notificationSettingsSchema = z.object({
+  browser: z.object({ pm: z.boolean().default(false) }).optional(),
+  general: z.object({ mention: z.boolean().default(true), notifyEmail: z.boolean().default(false) }).optional(),
+  myDeals: z.object({
+    dealRated: z.boolean().default(true),
+    dealCommented: z.boolean().default(true),
+    dealHot: z.boolean().default(true),
+    dealInfoAdded: z.boolean().default(true),
+    dealBeforeExpire: z.boolean().default(true),
+    dealExpired: z.boolean().default(true),
+    dealUnexpired: z.boolean().default(true),
+    dealCheckActive: z.boolean().default(true),
+    dealStats: z.boolean().default(true),
+    notifyEmail: z.boolean().default(false),
+  }).optional(),
+  followedDeals: z.object({
+    followedCommented: z.boolean().default(true),
+    followedInfoAdded: z.boolean().default(true),
+  }).optional(),
+  myAddedInfo: z.object({ infoLiked: z.boolean().default(true), notifyEmail: z.boolean().default(false) }).optional(),
+  clubPoints: z.object({
+    levelUp: z.boolean().default(true),
+    loseBenefits: z.boolean().default(true),
+    commentHelpful: z.boolean().default(true),
+    pointsVoted: z.boolean().default(true),
+    refUsed: z.boolean().default(true),
+    notifyEmail: z.boolean().default(false),
+  }).optional(),
+  badges: z.object({ newBadge: z.boolean().default(true), superPoster: z.boolean().default(true), notifyEmail: z.boolean().default(false) }).optional(),
+  follows: z.object({ followedPosted: z.boolean().default(true), notifyEmail: z.boolean().default(false) }).optional(),
+  messages: z.object({ notifyEmail: z.boolean().default(false) }).optional(),
+}).partial()

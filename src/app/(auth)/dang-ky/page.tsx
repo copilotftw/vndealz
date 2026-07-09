@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { authClient } from '@/lib/auth-client'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -11,6 +12,7 @@ import Link from 'next/link'
 import { Loader2 } from 'lucide-react'
 
 export default function RegisterPage() {
+  const t = useTranslations('auth')
   const router = useRouter()
   const [username, setUsername] = useState('')
   const [name, setName] = useState('')
@@ -23,7 +25,7 @@ export default function RegisterPage() {
     e.preventDefault()
     
     if (password !== confirmPassword) {
-      toast.error('Mật khẩu xác nhận không khớp!')
+      toast.error(t('passwordMismatch'))
       return
     }
 
@@ -38,9 +40,9 @@ export default function RegisterPage() {
     setIsLoading(false)
     
     if (error) {
-      toast.error(error.message || 'Đăng ký thất bại')
+      toast.error(error.message || t('registerError'))
     } else {
-      toast.success('Đăng ký thành công! Đang đăng nhập...')
+      toast.success(t('registerSuccess'))
       router.push('/')
       router.refresh()
     }

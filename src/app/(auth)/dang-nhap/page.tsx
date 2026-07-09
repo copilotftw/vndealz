@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { authClient } from '@/lib/auth-client'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -11,6 +12,7 @@ import Link from 'next/link'
 import { Loader2 } from 'lucide-react'
 
 export default function LoginPage() {
+  const t = useTranslations('auth')
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -26,9 +28,9 @@ export default function LoginPage() {
     setIsLoading(false)
     
     if (error) {
-      toast.error(error.message || 'Sai email hoặc mật khẩu')
+      toast.error(error.message || t('loginError'))
     } else {
-      toast.success('Đăng nhập thành công!')
+      toast.success(t('loginSuccess'))
       router.push('/')
       router.refresh()
     }

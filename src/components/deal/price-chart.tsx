@@ -29,7 +29,7 @@ export function PriceChart({ data }: PriceChartProps) {
   }))
 
   return (
-    <div className="w-full h-[300px] mt-8 bg-[var(--color-surface)]/50 glass-subtle p-4 rounded-xl">
+    <div className="w-full h-[18.75rem] mt-8 bg-[var(--color-surface)]/50 glass-subtle p-4 rounded-xl">
       <h3 className="text-[length:var(--font-size-lg)] font-bold mb-4 text-[var(--color-text)]">Price History</h3>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={chartData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>

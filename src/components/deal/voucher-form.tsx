@@ -140,7 +140,7 @@ export function VoucherForm({ categories }: { categories: any[] }) {
           <h2 className="text-2xl font-bold mb-6">{t('step2Title')}</h2>
           
           <div className="space-y-2">
-            <Label htmlFor="title">{t('title')} (erforderlich)</Label>
+            <Label htmlFor="title">{t('title')}</Label>
             <Input id="title" name="title" required minLength={5} maxLength={140} className="bg-white/50" placeholder={t('step2TitlePlaceholder')} />
           </div>
 

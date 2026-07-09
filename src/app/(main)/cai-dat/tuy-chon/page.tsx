@@ -15,7 +15,7 @@ import { LanguageSwitch } from '@/components/layout/language-switch'
 import { useState, useEffect, useTransition } from 'react'
 import { getUserSettings, updatePreferences } from '@/server/actions/settings'
 import { toast } from 'sonner'
-import { Loader2 } from 'lucide-react'
+
 
 export default function PreferencesPage() {
   const t = useTranslations('settings')
@@ -57,7 +57,7 @@ export default function PreferencesPage() {
     })
   }
 
-  if (!preferences) return <div className="p-12 flex justify-center"><Loader2 className="w-8 h-8 animate-spin" /></div>
+  if (!preferences) return null
 
   return (
     <div className="max-w-2xl text-[var(--color-text)]">
@@ -70,18 +70,14 @@ export default function PreferencesPage() {
             <h3 className="font-bold text-sm">{t('preferences.defaultLanding')}</h3>
           </div>
           <div className="w-2/3">
-            <Select name="defaultLanding" defaultValue={preferences.defaultLanding || "popular"}>
+            <Select name="defaultLanding" defaultValue={preferences.defaultLanding || "hot"}>
               <SelectTrigger className="w-full bg-transparent border-white/20">
-                <SelectValue placeholder={t('preferences.landingOptions.popular')} />
+                <SelectValue placeholder={t('preferences.landingOptions.hottest')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">{t('preferences.landingOptions.allDeals')}</SelectItem>
-                <SelectItem value="everything">{t('preferences.landingOptions.everything')}</SelectItem>
-                <SelectItem value="popular">{t('preferences.landingOptions.popular')}</SelectItem>
-                <SelectItem value="hottest">{t('preferences.landingOptions.hottest')}</SelectItem>
+                <SelectItem value="hot">{t('preferences.landingOptions.hottest')}</SelectItem>
+                <SelectItem value="new">{t('preferences.landingOptions.newest')}</SelectItem>
                 <SelectItem value="trending">{t('preferences.landingOptions.trending')}</SelectItem>
-                <SelectItem value="trendingDeals">{t('preferences.landingOptions.trendingDeals')}</SelectItem>
-                <SelectItem value="mytab">{t('preferences.landingOptions.myTab')}</SelectItem>
               </SelectContent>
             </Select>
           </div>

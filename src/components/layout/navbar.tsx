@@ -3,21 +3,18 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { SearchBar } from './search-bar'
-import { LanguageSwitch } from './language-switch'
-import { ThemeToggle } from '../theme/theme-toggle'
 import { useAuth } from '@/hooks/use-auth'
-import { authClient } from '@/lib/auth-client'
-import { useLocale, useTranslations } from 'next-intl'
-import { Menu, User, Settings, LogOut, Search, ChevronDown, SlidersHorizontal, Bookmark, Activity, Tag, Megaphone, MessageCircle, Award, BarChart2, Coins, Ticket, Gift, LayoutGrid, Shield, Plus } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { Menu, User, Search, ChevronDown, SlidersHorizontal, Megaphone, Ticket, Gift, LayoutGrid, Plus, Tag, MessageCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { UserMenuDropdown } from './user-menu-dropdown'
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { useEffect, useRef, useState } from 'react'
 import { useHeaderContext } from './header-context'
@@ -82,7 +79,6 @@ function useRowVisibility() {
 
 export function Navbar() {
   const { user, loading } = useAuth()
-  const locale = useLocale()
   const { visible, atTop } = useScrollDirection()
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false)
   const { showRow2, showRow3, row3Content, isSeamless } = useRowVisibility()
@@ -149,75 +145,18 @@ export function Navbar() {
                 )}
 
                 {user && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger render={
+                  <UserMenuDropdown
+                    user={user}
+                    t={t}
+                    triggerElement={
                       <Button variant="ghost" className="nav-icon-btn h-10 w-10 p-0 flex items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
                         <Avatar className="h-8 w-8 border border-[var(--color-nav-border)]">
                           <AvatarImage src={user.image || ''} alt={user.name} />
                           <AvatarFallback className="bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-bold">{user.name?.charAt(0).toUpperCase()}</AvatarFallback>
                         </Avatar>
                       </Button>
-                    } />
-                    <DropdownMenuContent className="w-56" align="end">
-                      <div className="px-2 py-1.5 font-normal">
-                        <div className="flex flex-col space-y-1">
-                          <p className="text-sm font-medium leading-none text-[var(--color-text)]">{user.name}</p>
-                          <p className="text-xs leading-none text-[var(--color-text-muted)]">{user.email}</p>
-                        </div>
-                      </div>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem className="cursor-pointer py-2" render={<Link href={`/ho-so/${user.name}`} className="w-full flex items-center" />}>
-                        <Coins className="mr-3 h-4 w-4" />
-                        <span>{t('clubPoints')}</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem className="cursor-pointer py-2" render={<Link href={`/ho-so/${user.name}/saved`} className="w-full flex items-center" />}>
-                        <Bookmark className="mr-3 h-4 w-4" />
-                        <span>{t('savedPosts')}</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem className="cursor-pointer py-2" render={<Link href={`/ho-so/${user.name}/activity`} className="w-full flex items-center" />}>
-                        <Activity className="mr-3 h-4 w-4" />
-                        <span>{t('activity')}</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="cursor-pointer py-2" render={<Link href={`/ho-so/${user.name}/deals`} className="w-full flex items-center" />}>
-                        <Tag className="mr-3 h-4 w-4" />
-                        <span>{t('postedDeals')}</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="cursor-pointer py-2" render={<Link href={`/ho-so/${user.name}/thao-luan`} className="w-full flex items-center" />}>
-                        <MessageCircle className="mr-3 h-4 w-4" />
-                        <span>{t('discussions')}</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem className="cursor-pointer py-2" render={<Link href={`/ho-so/${user.name}/badges`} className="w-full flex items-center" />}>
-                        <Award className="mr-3 h-4 w-4" />
-                        <span>{t('badges')}</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="cursor-pointer py-2" render={<Link href={`/ho-so/${user.name}/stats`} className="w-full flex items-center" />}>
-                        <BarChart2 className="mr-3 h-4 w-4" />
-                        <span>{t('statistics')}</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem className="cursor-pointer py-2" render={<Link href="/cai-dat" className="w-full flex items-center" />}>
-                        <Settings className="mr-3 h-4 w-4" />
-                        <span>{t('settings')}</span>
-                      </DropdownMenuItem>
-                      {['ADMIN', 'MODERATOR'].includes((user as any).role) && (
-                        <DropdownMenuItem className="cursor-pointer py-2" render={<Link href="/quan-tri" className="w-full flex items-center text-[var(--color-primary)]" />}>
-                          <Shield className="mr-3 h-4 w-4" />
-                          <span>{t('admin')}</span>
-                        </DropdownMenuItem>
-                      )}
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        className="cursor-pointer py-2 text-[var(--color-danger)] focus:text-[var(--color-danger)] focus:bg-[var(--color-danger)]/10"
-                        onClick={() => authClient.signOut()}
-                      >
-                        <LogOut className="mr-3 h-4 w-4" />
-                        <span>{t('logout')}</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                    }
+                  />
                 )}
 
                 {/* Submit Deal/Discussion CTA */}

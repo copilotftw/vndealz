@@ -1,6 +1,7 @@
 'use client'
 
 import { useOptimistic, useTransition, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { voteDeal } from '@/server/actions/deal'
 import { Plus, Minus } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
@@ -11,18 +12,21 @@ export function TemperatureVote({
   dealId,
   temperature: initialTemp,
   userVote = 0,
+  glass = false,
 }: {
   dealId: string
   temperature: number
   userVote?: number
+  glass?: boolean
 }) {
+  const t = useTranslations('deal')
   const { user } = useAuth()
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   
   const handleVote = (val: 1 | -1) => {
     if (!user) {
-      toast.error('Vui lòng đăng nhập để bình chọn!')
+      toast.error(t('signInToVote'))
       router.push('/dang-nhap')
       return
     }
@@ -31,7 +35,7 @@ export function TemperatureVote({
       try {
         await voteDeal(dealId, val)
       } catch (e: any) {
-        toast.error(e.message || 'Lỗi bình chọn')
+        toast.error(e.message || t('voteError'))
       }
     })
   }
@@ -56,7 +60,7 @@ export function TemperatureVote({
   
   return (
     <div 
-      className="flex items-center bg-[var(--color-bg)] rounded-[var(--border-radius-full)] border border-[var(--color-border)]/30 overflow-hidden select-none shadow-sm"
+      className={`flex items-center rounded-[var(--border-radius-full)] overflow-hidden select-none ${glass ? 'bg-white/10 backdrop-blur-md border border-white/20 shadow-lg' : 'bg-[var(--color-bg)] border border-[var(--color-border)]/30 shadow-sm'}`}
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >

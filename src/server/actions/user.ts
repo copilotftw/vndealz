@@ -4,6 +4,8 @@ import { db } from '@/lib/db'
 import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
 import { revalidatePath } from 'next/cache'
+import { routes } from '@/lib/routes'
+import { sendNotification } from '@/server/services/notification'
 
 async function getSession() {
   const s = await auth.api.getSession({ headers: await headers() })
@@ -43,9 +45,9 @@ export async function updateProfile(formData: FormData) {
     }
   })
   
-  revalidatePath('/[locale]/cai-dat', 'layout')
-  revalidatePath(`/[locale]/ho-so/${name}`)
-  if (s.user.name !== name) revalidatePath(`/[locale]/ho-so/${s.user.name}`)
+  revalidatePath(routes.settings.root, 'layout')
+  revalidatePath(routes.profile(name))
+  if (s.user.name !== name) revalidatePath(routes.profile(s.user.name!))
   
   return updated
 }
@@ -100,8 +102,8 @@ export async function toggleBookmark(dealId: string) {
     })
   }
   
-  revalidatePath('/[locale]/deal/[slug]')
-  revalidatePath('/[locale]/ho-so/[username]')
+  revalidatePath(routes.deal('[slug]'))
+  revalidatePath(routes.profile('[username]'))
 }
 
 export async function getUserProfile(username: string) {
@@ -211,9 +213,17 @@ export async function toggleFollowUser(targetUsername: string) {
         followingId: targetUser.id
       }
     })
+
+    sendNotification({
+      userId: targetUser.id,
+      event: 'follows.followedPosted',
+      title: 'Bạn có người theo dõi mới',
+      body: `${s.user.name || 'Ai đó'} đã bắt đầu theo dõi bạn`,
+      link: `/ho-so/${s.user.name}`,
+    }).catch(console.error)
   }
 
-  revalidatePath('/[locale]/ho-so/[username]', 'layout')
+  revalidatePath(routes.profile('[username]'), 'layout')
   return !existing
 }
 
@@ -278,6 +288,6 @@ export async function toggleMuteUser(targetUsername: string) {
   }
 
   // Revalidate feeds to apply mute filters
-  revalidatePath('/[locale]', 'layout')
+  revalidatePath(routes.home, 'layout')
   return !existing
 }

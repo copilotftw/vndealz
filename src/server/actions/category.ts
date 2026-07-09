@@ -8,6 +8,7 @@ import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
 import { categorySchema } from '@/lib/validations'
 import { revalidatePath } from 'next/cache'
+import { routes } from '@/lib/routes'
 
 async function requireMod() {
   const s = await auth.api.getSession({ headers: await headers() })
@@ -82,7 +83,7 @@ export async function createCategory(input: {
   const cat = await db.category.create({
     data: { ...data, depth, parentId: data.parentId || null },
   })
-  revalidatePath('/[locale]/admin/categories')
+  revalidatePath(routes.admin.categories)
   return cat
 }
 
@@ -92,7 +93,7 @@ export async function updateCategory(
 ) {
   await requireMod()
   const cat = await db.category.update({ where: { id }, data: input })
-  revalidatePath('/[locale]/admin/categories')
+  revalidatePath(routes.admin.categories)
   return cat
 }
 
@@ -119,7 +120,7 @@ export async function moveCategory(id: string, newParentId: string | null) {
     }
   }
   await fixDepths(id, newDepth)
-  revalidatePath('/[locale]/admin/categories')
+  revalidatePath(routes.admin.categories)
 }
 
 export async function deleteCategory(id: string) {
@@ -132,11 +133,11 @@ export async function deleteCategory(id: string) {
     await db.deal.updateMany({ where: { categoryId: id }, data: { categoryId: fallback } })
   }
   await db.category.delete({ where: { id } })
-  revalidatePath('/[locale]/admin/categories')
+  revalidatePath(routes.admin.categories)
 }
 
 export async function reorderCategories(updates: { id: string; order: number }[]) {
   await requireMod()
   await Promise.all(updates.map(u => db.category.update({ where: { id: u.id }, data: { order: u.order } })))
-  revalidatePath('/[locale]/admin/categories')
+  revalidatePath(routes.admin.categories)
 }

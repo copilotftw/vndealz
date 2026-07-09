@@ -1,46 +1,50 @@
 // AUTO-GENERATED FILE. DO NOT EDIT DIRECTLY.
 // Run 'npm run theme:generate' to update this file.
 
-import aliexpressLayout from './layouts/aliexpress'
-import amazonLayout from './layouts/amazon'
-import minimalistLayout from './layouts/minimalist'
-import modernLayout from './layouts/modern'
+import atlasLayout from './layouts/atlas'
+import ledgerLayout from './layouts/ledger'
 import mydealzLayout from './layouts/mydealz'
-import shopeeLayout from './layouts/shopee'
+import prismLayout from './layouts/prism'
+import pulseLayout from './layouts/pulse'
+import vitrineLayout from './layouts/vitrine'
+import amberColor from './colors/amber'
+import azureColor from './colors/azure'
 import christmasColor from './colors/christmas'
-import darkOrangeColor from './colors/dark-orange'
+import crimsonColor from './colors/crimson'
 import defaultColor from './colors/default'
+import emeraldColor from './colors/emerald'
 import forestColor from './colors/forest'
-import midAutumnColor from './colors/mid-autumn'
+import graphiteColor from './colors/graphite'
 import midnightColor from './colors/midnight'
-import monochromeColor from './colors/monochrome'
-import nationalDayColor from './colors/national-day'
-import oceanColor from './colors/ocean'
+import plumColor from './colors/plum'
 import roseColor from './colors/rose'
-import sunsetColor from './colors/sunset'
+import sandColor from './colors/sand'
+import tealColor from './colors/teal'
 import tetColor from './colors/tet'
 
 export const LAYOUTS = {
-  'aliexpress': aliexpressLayout,
-  'amazon': amazonLayout,
-  'minimalist': minimalistLayout,
-  'modern': modernLayout,
+  'atlas': atlasLayout,
+  'ledger': ledgerLayout,
   'mydealz': mydealzLayout,
-  'shopee': shopeeLayout,
+  'prism': prismLayout,
+  'pulse': pulseLayout,
+  'vitrine': vitrineLayout,
 } as const;
 
 export const COLORS = {
+  'amber': amberColor,
+  'azure': azureColor,
   'christmas': christmasColor,
-  'dark-orange': darkOrangeColor,
+  'crimson': crimsonColor,
   'default': defaultColor,
+  'emerald': emeraldColor,
   'forest': forestColor,
-  'mid-autumn': midAutumnColor,
+  'graphite': graphiteColor,
   'midnight': midnightColor,
-  'monochrome': monochromeColor,
-  'national-day': nationalDayColor,
-  'ocean': oceanColor,
+  'plum': plumColor,
   'rose': roseColor,
-  'sunset': sunsetColor,
+  'sand': sandColor,
+  'teal': tealColor,
   'tet': tetColor,
 } as const;
 

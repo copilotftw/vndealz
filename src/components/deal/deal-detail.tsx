@@ -65,10 +65,13 @@ export function DealDetail({ deal, locale, initialIsSaved = false }: { deal: any
   return (
     <div className="flex flex-col gap-4">
       {/* 1. TOP SECTION (Card 1) */}
-      <article className="bg-[var(--color-surface)] border border-[var(--color-border)]/60 rounded-[var(--border-radius-xl)] shadow-sm overflow-hidden flex flex-col md:flex-row">
+      <article
+        className="deal-detail-root bg-[var(--color-surface)] border border-[var(--color-border)]/60 rounded-[var(--border-radius-xl)] shadow-sm overflow-hidden flex flex-col md:flex-row"
+        style={{ '--vt-name': `deal-${deal.id}` } as React.CSSProperties}
+      >
         
         {/* Left: Image Gallery */}
-        <div className="w-full md:w-[480px] shrink-0 bg-[var(--color-surface-hover)] relative p-4 flex gap-4 md:border-r border-[var(--color-border)]/60">
+        <div data-detail-hero className="w-full md:w-[30rem] shrink-0 bg-[var(--color-surface-hover)] relative p-4 flex gap-4 md:border-r border-[var(--color-border)]/60">
           
           {/* Thumbnails (Only show if multiple images) */}
           {allImages.length > 1 && (
@@ -88,7 +91,7 @@ export function DealDetail({ deal, locale, initialIsSaved = false }: { deal: any
           )}
 
           {/* Main Selected Image */}
-          <div className="relative flex-1 bg-white rounded-2xl overflow-hidden shadow-sm aspect-square md:aspect-auto md:h-full flex items-center justify-center">
+          <div data-detail-image className="relative flex-1 bg-white rounded-2xl overflow-hidden shadow-sm aspect-square md:aspect-auto md:h-full flex items-center justify-center">
             <Image
               src={selectedImage}
               alt={deal.title}
@@ -105,7 +108,7 @@ export function DealDetail({ deal, locale, initialIsSaved = false }: { deal: any
         </div>
 
         {/* Right: Content */}
-        <div className="flex-1 p-5 md:p-8 flex flex-col relative">
+        <div data-detail-content className="flex-1 p-5 md:p-8 flex flex-col relative">
           
           {/* Header Row */}
           <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
@@ -143,7 +146,7 @@ export function DealDetail({ deal, locale, initialIsSaved = false }: { deal: any
 
           <h1 className="text-[length:var(--font-size-xl)] md:text-[length:var(--font-size-2xl)] font-bold text-[var(--color-text)] leading-snug mb-4">
             {deal.sponsored && (
-              <span className="inline-block bg-[var(--color-sponsored)] text-white text-[10px] font-bold px-1.5 py-0.5 rounded shadow-sm mr-2 align-middle uppercase tracking-wide">
+              <span className="inline-block bg-[var(--color-sponsored)] text-white text-[0.625rem] font-bold px-1.5 py-0.5 rounded shadow-sm mr-2 align-middle uppercase tracking-wide">
                 {t('sponsored')}
               </span>
             )}
@@ -152,13 +155,13 @@ export function DealDetail({ deal, locale, initialIsSaved = false }: { deal: any
 
           <div className="flex flex-wrap items-center gap-3 mb-2">
             {deal.price !== null && (
-              <span className="text-[36px] font-black text-[var(--color-success)] leading-none tracking-tight">
+              <span className="text-[2.25rem] font-black text-[var(--color-success)] leading-none tracking-tight">
                 {formatPrice(Number(deal.price), locale === 'vi' ? 'vi-VN' : 'en-US')}
               </span>
             )}
             {deal.comparePrice !== null && (
               <div className="flex items-center gap-2">
-                <s className="text-[20px] font-bold text-[var(--color-text-muted)] leading-snug">
+                <s className="text-[1.25rem] font-bold text-[var(--color-text-muted)] leading-snug">
                   {formatPrice(Number(deal.comparePrice), locale === 'vi' ? 'vi-VN' : 'en-US')}
                 </s>
                 <AlertCircle className="w-4 h-4 text-[var(--color-text-muted)] opacity-70" />
@@ -181,7 +184,7 @@ export function DealDetail({ deal, locale, initialIsSaved = false }: { deal: any
           </div>
 
           <div className="mt-auto flex flex-col sm:flex-row gap-3 pt-4">
-            <Link href={affiliateUrl} target="_blank" rel="nofollow noopener" className="flex-1 max-w-[280px] inline-flex items-center justify-center rounded-full bg-[var(--color-success)] hover:brightness-110 text-white font-bold h-12 text-[17px] shadow-sm transition-colors">
+            <Link href={affiliateUrl} target="_blank" rel="nofollow noopener" className="flex-1 max-w-[17.5rem] inline-flex items-center justify-center rounded-full bg-[var(--color-success)] hover:brightness-110 text-white font-bold h-12 text-[1.0625rem] shadow-sm transition-colors">
                 {t('goToDeal')}
                 <ExternalLink className="ml-2 w-4 h-4" />
             </Link>
@@ -190,7 +193,7 @@ export function DealDetail({ deal, locale, initialIsSaved = false }: { deal: any
               <Button 
                 onClick={copyCoupon} 
                 variant="outline"
-                className="h-12 text-[17px] border-dashed border-[var(--color-primary)] text-[var(--color-primary)] bg-[var(--color-primary)]/5 hover:bg-[var(--color-primary)]/10 rounded-full"
+                className="h-12 text-[1.0625rem] border-dashed border-[var(--color-primary)] text-[var(--color-primary)] bg-[var(--color-primary)]/5 hover:bg-[var(--color-primary)]/10 rounded-full"
               >
                 <span className="font-mono mr-2">{deal.couponCode}</span>
                 {copied ? <Check className="w-5 h-5 text-[var(--color-success)]" /> : <Copy className="w-5 h-5" />}
@@ -245,7 +248,7 @@ export function DealDetail({ deal, locale, initialIsSaved = false }: { deal: any
                 {deal.user.name}
               </Link>
               {deal.user.tier === 'MODERATOR' && (
-                <span className="bg-[var(--color-success)]/10 text-[var(--color-success)] border border-[var(--color-success)]/30 text-[10px] font-bold px-1.5 py-0.5 rounded-sm flex items-center gap-1 uppercase tracking-wide">
+                <span className="bg-[var(--color-success)]/10 text-[var(--color-success)] border border-[var(--color-success)]/30 text-[0.625rem] font-bold px-1.5 py-0.5 rounded-sm flex items-center gap-1 uppercase tracking-wide">
                   <BadgeCheck className="w-3 h-3" />
                   {t('editor')}
                 </span>
@@ -273,7 +276,7 @@ export function DealDetail({ deal, locale, initialIsSaved = false }: { deal: any
         </div>
 
         {/* Edit Meta & Disclaimer */}
-        <div className="mt-10 pt-6 border-t border-[var(--color-border)]/50 text-[13px] text-[var(--color-text-muted)] space-y-4">
+        <div className="mt-10 pt-6 border-t border-[var(--color-border)]/50 text-[0.8125rem] text-[var(--color-text-muted)] space-y-4">
           <p className="italic">
             {t('editedBy')} {deal.user.name}, {t('editedAgo')}
           </p>

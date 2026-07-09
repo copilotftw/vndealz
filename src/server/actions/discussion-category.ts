@@ -5,6 +5,7 @@ import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
 import { discussionCategorySchema } from '@/lib/validations'
 import { revalidatePath } from 'next/cache'
+import { routes } from '@/lib/routes'
 
 async function requireMod() {
   const s = await auth.api.getSession({ headers: await headers() })
@@ -74,7 +75,7 @@ export async function createDiscussionCategory(input: {
   const cat = await db.discussionCategory.create({
     data: { ...data, depth, parentId: data.parentId || null },
   })
-  revalidatePath('/[locale]/admin/discussion-categories')
+  revalidatePath(routes.admin.discussionCategories)
   return cat
 }
 
@@ -84,7 +85,7 @@ export async function updateDiscussionCategory(
 ) {
   await requireMod()
   const cat = await db.discussionCategory.update({ where: { id }, data: input })
-  revalidatePath('/[locale]/admin/discussion-categories')
+  revalidatePath(routes.admin.discussionCategories)
   return cat
 }
 
@@ -110,7 +111,7 @@ export async function moveDiscussionCategory(id: string, newParentId: string | n
     }
   }
   await fixDepths(id, newDepth)
-  revalidatePath('/[locale]/admin/discussion-categories')
+  revalidatePath(routes.admin.discussionCategories)
 }
 
 export async function deleteDiscussionCategory(id: string) {
@@ -124,11 +125,11 @@ export async function deleteDiscussionCategory(id: string) {
     await db.deal.updateMany({ where: { discussionCategoryId: id }, data: { discussionCategoryId: fallback } })
   }
   await db.discussionCategory.delete({ where: { id } })
-  revalidatePath('/[locale]/admin/discussion-categories')
+  revalidatePath(routes.admin.discussionCategories)
 }
 
 export async function reorderDiscussionCategories(updates: { id: string; order: number }[]) {
   await requireMod()
   await Promise.all(updates.map(u => db.discussionCategory.update({ where: { id: u.id }, data: { order: u.order } })))
-  revalidatePath('/[locale]/admin/discussion-categories')
+  revalidatePath(routes.admin.discussionCategories)
 }

@@ -20,7 +20,7 @@ export async function RelatedDeals({ categorySlug, currentDealId, locale }: { ca
       
       <div className="flex gap-4 overflow-x-auto pb-4 snap-x no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
         {filteredDeals.map(deal => (
-          <Link href={`/deal/${deal.slug}`} key={deal.id} className="group shrink-0 w-[160px] md:w-[180px] snap-start bg-[var(--color-surface)] border border-[var(--color-border)]/60 rounded-[var(--border-radius-lg)] shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col relative">
+          <Link href={`/deal/${deal.slug}`} key={deal.id} className="group shrink-0 w-[10rem] md:w-[11.25rem] snap-start bg-[var(--color-surface)] border border-[var(--color-border)]/60 rounded-[var(--border-radius-lg)] shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col relative">
             
             {/* Temp badge */}
             <div className="absolute top-2 right-2 bg-white/90 backdrop-blur text-[var(--color-danger)] text-xs font-bold px-1.5 py-0.5 rounded-sm shadow-sm z-10 border border-[var(--color-border)]/20">
@@ -38,24 +38,24 @@ export async function RelatedDeals({ categorySlug, currentDealId, locale }: { ca
             </div>
             
             <div className="p-3 flex-1 flex flex-col">
-              <h4 className="text-[13px] font-semibold text-[var(--color-text)] line-clamp-3 leading-snug group-hover:text-[var(--color-primary)] transition-colors mb-3">
+              <h4 className="text-[0.8125rem] font-semibold text-[var(--color-text)] line-clamp-3 leading-snug group-hover:text-[var(--color-primary)] transition-colors mb-3">
                 {deal.title}
               </h4>
               
               <div className="mt-auto flex flex-col gap-1">
                 {deal.price !== null && (
-                  <span className="text-[15px] font-black text-[var(--color-success)] leading-none">
+                  <span className="text-[0.9375rem] font-black text-[var(--color-success)] leading-none">
                     {formatPrice(Number(deal.price), locale === 'vi' ? 'vi-VN' : 'en-US')}
                   </span>
                 )}
                 <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
                   {deal.comparePrice !== null && (
-                    <s className="text-[11px] text-[var(--color-text-muted)] font-medium">
+                    <s className="text-[0.6875rem] text-[var(--color-text-muted)] font-medium">
                       {formatPrice(Number(deal.comparePrice), locale === 'vi' ? 'vi-VN' : 'en-US')}
                     </s>
                   )}
                   {deal.comparePrice !== null && deal.price !== null && (
-                    <span className="bg-[var(--color-success)]/10 text-[var(--color-success)] border border-[var(--color-success)]/30 text-[10px] font-bold px-1 py-0.5 rounded-sm">
+                    <span className="bg-[var(--color-success)]/10 text-[var(--color-success)] border border-[var(--color-success)]/30 text-[0.625rem] font-bold px-1 py-0.5 rounded-sm">
                       -{Math.round((1 - Number(deal.price) / Number(deal.comparePrice)) * 100)}%
                     </span>
                   )}

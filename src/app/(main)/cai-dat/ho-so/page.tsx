@@ -36,7 +36,7 @@ export default function SettingsPage() {
     checkHasPassword().then(setHasPassword)
   }, [])
 
-  if (loading) return <div className="p-12 flex justify-center"><Loader2 className="w-8 h-8 animate-spin" /></div>
+  if (loading) return null
   
   if (!user) {
     if (typeof window !== 'undefined') router.push('/dang-nhap')

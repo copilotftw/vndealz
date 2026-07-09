@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import { useTranslations } from 'next-intl'
 import { createComment } from '@/server/actions/comment'
 import { useAuth } from '@/hooks/use-auth'
 import { toast } from 'sonner'
@@ -18,6 +19,7 @@ export function CommentForm({
   parentId?: string
   onSuccess?: () => void
 }) {
+  const t = useTranslations('comment')
   const { user } = useAuth()
   const router = useRouter()
   const [content, setContent] = useState('')
@@ -27,7 +29,7 @@ export function CommentForm({
     e.preventDefault()
     
     if (!user) {
-      toast.error('Vui lòng đăng nhập để bình luận')
+      toast.error(t('signInToComment'))
       router.push('/dang-nhap')
       return
     }
@@ -38,10 +40,10 @@ export function CommentForm({
       try {
         await createComment({ content, dealId, parentId })
         setContent('')
-        toast.success('Bình luận đã được gửi!')
+        toast.success(t('commentSuccess'))
         onSuccess?.()
       } catch (err: any) {
-        toast.error(err.message || 'Có lỗi xảy ra')
+        toast.error(err.message || t('commentError'))
       }
     })
   }

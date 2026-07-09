@@ -1,22 +1,35 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import { useTranslations } from 'next-intl'
 import { updateSiteConfig } from '@/server/actions/theme'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { toast } from 'sonner'
-import { Loader2, Palette, MonitorSmartphone, Type, Wand2, Info } from 'lucide-react'
+import { Loader2, Palette, MonitorSmartphone, Type, LayoutGrid, Terminal, AlignLeft, BookOpen, Zap, Map, Info } from 'lucide-react'
 
-import { AVAILABLE_LAYOUTS, AVAILABLE_COLORS, COLORS as REGISTRY_COLORS } from '@/components/theme/registry'
+import { AVAILABLE_LAYOUTS, AVAILABLE_COLORS, COLORS as REGISTRY_COLORS, LAYOUTS as REGISTRY_LAYOUTS } from '@/components/theme/registry'
 
-const LAYOUTS = AVAILABLE_LAYOUTS.map(id => ({
-  id,
-  name: id.charAt(0).toUpperCase() + id.slice(1).replace(/-/g, ' '),
-  desc: `Giao diện ${id}`,
-  icon: Wand2
-}))
+const PERSONA_ICONS: Record<string, React.ElementType> = {
+  mydealz: LayoutGrid,
+  prism:   Palette,
+  ledger:  Terminal,
+  vitrine: BookOpen,
+  pulse:   Zap,
+  atlas:   Map,
+}
 
-const SCALE_LABELS = ['XS', 'SM', 'MD', 'LG', 'XL']
+const LAYOUTS = AVAILABLE_LAYOUTS.map(id => {
+  const persona = REGISTRY_LAYOUTS[id as keyof typeof REGISTRY_LAYOUTS]
+  return {
+    id,
+    name: persona?.name ?? id.charAt(0).toUpperCase() + id.slice(1),
+    desc: `${persona?.shell.nav ?? ''} nav · ${persona?.shell.sidebar ?? ''} sidebar`,
+    icon: PERSONA_ICONS[id] ?? LayoutGrid,
+  }
+})
+
+const SCALE_LABELS = ['Tight', 'Compact', 'Default', 'Comfort', 'Spacious']
 const SCALE_KEYS = ['xs', 'sm', 'md', 'lg', 'xl']
 
 const COLORS = AVAILABLE_COLORS.map(id => {
@@ -29,6 +42,7 @@ const COLORS = AVAILABLE_COLORS.map(id => {
 })
 
 export function ThemePanel({ initialConfig }: { initialConfig: any }) {
+  const t = useTranslations('admin')
   const [config, setConfig] = useState(initialConfig || { layout: 'modern', scale: 'md', colorScheme: 'default', customCss: '' })
   const [isPending, startTransition] = useTransition()
 
@@ -38,10 +52,16 @@ export function ThemePanel({ initialConfig }: { initialConfig: any }) {
     startTransition(async () => {
       try {
         await updateSiteConfig(config)
-        toast.success('Đã cập nhật giao diện thành công!')
-        setTimeout(() => window.location.reload(), 500)
+        toast.success(t('themeUpdateSuccess'))
+        setTimeout(() => {
+          if ('startViewTransition' in document) {
+            document.startViewTransition(() => { window.location.href = '/' })
+          } else {
+            window.location.href = '/'
+          }
+        }, 400)
       } catch (err: any) {
-        toast.error(err.message || 'Lỗi khi cập nhật giao diện')
+        toast.error(err.message || t('themeUpdateError'))
       }
     })
   }
@@ -52,7 +72,7 @@ export function ThemePanel({ initialConfig }: { initialConfig: any }) {
       <div className="glass-strong p-6 rounded-xl border border-border">
         <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
           <MonitorSmartphone className="w-5 h-5 text-primary" />
-          Bố cục (Layout)
+          {t('themeLayout')}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {LAYOUTS.map(layout => (
@@ -79,13 +99,13 @@ export function ThemePanel({ initialConfig }: { initialConfig: any }) {
       <div className="glass-strong p-6 rounded-xl border border-border">
         <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
           <Type className="w-5 h-5 text-primary" />
-          Kích thước (Scale)
+          {t('themeScale')}
         </h2>
         <div className="space-y-3">
           <div className="flex items-center justify-between text-sm text-muted-foreground">
-            <span>Nhỏ gọn</span>
+            <span>{t('themeScaleCompact')}</span>
             <span className="font-bold text-lg text-foreground">{SCALE_LABELS[scaleIndex >= 0 ? scaleIndex : 2]}</span>
-            <span>Rộng rãi</span>
+            <span>{t('themeScaleSpacious')}</span>
           </div>
           <input
             type="range"
@@ -103,7 +123,7 @@ export function ThemePanel({ initialConfig }: { initialConfig: any }) {
           </div>
           <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1.5">
             <Info className="w-3.5 h-3.5" />
-            Kích thước lớn hơn = ít cột hơn trong bố cục lưới
+            {t('themeScaleHint')}
           </p>
         </div>
       </div>
@@ -112,7 +132,7 @@ export function ThemePanel({ initialConfig }: { initialConfig: any }) {
       <div className="glass-strong p-6 rounded-xl border border-border">
         <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
           <Palette className="w-5 h-5 text-primary" />
-          Màu sắc (Color Scheme)
+          {t('themeColors')}
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
           {COLORS.map(color => (
@@ -139,9 +159,9 @@ export function ThemePanel({ initialConfig }: { initialConfig: any }) {
       {/* Custom CSS */}
       <div className="glass-strong p-6 rounded-xl border border-border">
         <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-          &lt;/&gt; CSS Tuỳ chỉnh
+          &lt;/&gt; {t('themeCustomCss')}
         </h2>
-        <p className="text-sm text-muted-foreground mb-4">Nhập mã CSS nếu bạn muốn ghi đè các biến hệ thống.</p>
+        <p className="text-sm text-muted-foreground mb-4">{t('themeCustomCssDesc')}</p>
         <Textarea 
           value={config.customCss || ''} 
           onChange={(e) => setConfig({ ...config, customCss: e.target.value })}
@@ -159,7 +179,7 @@ export function ThemePanel({ initialConfig }: { initialConfig: any }) {
           className="shadow-xl"
         >
           {isPending ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
-          Lưu cấu hình giao diện
+          {t('themeSave')}
         </Button>
       </div>
     </div>

@@ -7,11 +7,15 @@ import { dealSchema } from '@/lib/validations'
 import { generateSlug } from '@/lib/utils'
 import { calculateTemperature } from '@/lib/temperature'
 import { revalidatePath } from 'next/cache'
+import { getCached, setCached, invalidateCache } from '@/lib/redis'
 import { getCategoryWithDescendants } from './category'
 import { getMutedUserIds } from './user'
 import { getSafeUserSettings } from './settings'
 import { matchDealWithAlerts } from '@/lib/alerts/matching-engine'
 import { evaluateGamification } from '@/lib/gamification/engine'
+import { sendNotification } from '@/server/services/notification'
+import { routes } from '@/lib/routes'
+import type { DealCardData } from '@/components/deal/deal-card'
 
 async function getSession() {
   const s = await auth.api.getSession({ headers: await headers() })
@@ -53,7 +57,7 @@ export async function createDeal(formData: FormData) {
   })
 
   await invalidateCache('deals:*')
-  revalidatePath('/[locale]/admin/moderation')
+  revalidatePath(routes.admin.moderation)
   
   // Ponytail: fire and forget gamification check
   evaluateGamification(s.user.id).catch(console.error)
@@ -99,13 +103,36 @@ export async function voteDeal(dealId: string, value: 1 | -1) {
     
     // Check if new temperature triggers any alerts
     matchDealWithAlerts(dealId).catch(console.error)
-    
+
     // Evaluate Gamification for the deal creator
     evaluateGamification(deal.userId).catch(console.error)
+
+    // Notify deal owner of rating (fire and forget)
+    if (deal.userId !== s.user.id) {
+      sendNotification({
+        userId: deal.userId,
+        event: 'myDeals.dealRated',
+        title: 'Deal của bạn được vote',
+        body: `${s.user.name || 'Ai đó'} đã vote deal "${deal.title}"`,
+        link: `/deal/${deal.slug}`,
+      }).catch(console.error)
+    }
+
+    // Notify deal owner when deal goes hot for the first time (temp >= 100)
+    const wasAlreadyHot = deal.temperature >= 100
+    if (temp >= 100 && !wasAlreadyHot) {
+      sendNotification({
+        userId: deal.userId,
+        event: 'myDeals.dealHot',
+        title: 'Deal của bạn đang nóng! 🔥',
+        body: `"${deal.title}" đã đạt ${temp}° và đang hot`,
+        link: `/deal/${deal.slug}`,
+      }).catch(console.error)
+    }
   }
   await invalidateCache('deals:*')
-  revalidatePath('/[locale]/deal/[slug]')
-  revalidatePath('/[locale]', 'layout')
+  revalidatePath(routes.deal('[slug]'))
+  revalidatePath(routes.home, 'layout')
 }
 
 export async function toggleSaveDeal(dealId: string) {
@@ -141,8 +168,6 @@ export async function toggleSaveDeal(dealId: string) {
   }
 }
 
-import { getCached, setCached, invalidateCache } from '@/lib/redis'
-
 export async function getDeals(opts: {
   sort?: 'hot' | 'new' | 'trending'
   type?: string
@@ -150,21 +175,50 @@ export async function getDeals(opts: {
   merchant?: string
   page?: number
   limit?: number
+  priceMin?: number
+  priceMax?: number
+  tempFilter?: 'hot' | 'warm' | 'cold'
+  // Persona data flags — skip heavy TEXT columns the active layout never renders.
+  data?: { needsImage?: boolean; needsDescription?: boolean; needsPriceHistory?: boolean }
 }) {
   const page = opts.page || 1
   const limit = opts.limit || 20
   const skip = (page - 1) * limit
-  
-  const mutedUserIds = await getMutedUserIds()
+
+  // Default to fetching everything (mydealz-equivalent) when no flags passed.
+  const needsImage = opts.data?.needsImage ?? true
+  const needsDescription = opts.data?.needsDescription ?? true
+  const needsPriceHistory = opts.data?.needsPriceHistory ?? false
+
+  // Prisma select: base scalars always, heavy TEXT columns + relations behind flags.
+  const dealSelect: any = {
+    id: true, slug: true, title: true, url: true,
+    price: true, comparePrice: true, couponCode: true, merchant: true,
+    temperature: true, status: true, type: true, sponsored: true,
+    isNsfw: true, createdAt: true, categoryId: true,
+    category: true,
+    user: { select: { id: true, name: true, avatar: true, tier: true } },
+    _count: { select: { comments: true } },
+  }
+  if (needsImage) { dealSelect.image = true; dealSelect.blurHash = true }
+  if (needsDescription) dealSelect.description = true
+  if (needsPriceHistory) {
+    dealSelect.priceHistory = { orderBy: { createdAt: 'asc' }, select: { price: true, createdAt: true } }
+  }
+
+  const [mutedUserIds, settings] = await Promise.all([getMutedUserIds(), getSafeUserSettings()])
   const mutedKey = mutedUserIds.length > 0 ? `muted:${mutedUserIds.join(',')}` : 'nomute'
-  
-  const settings = await getSafeUserSettings()
-  const showNsfw = settings.preferences?.showNsfw ?? false
+  const showNsfw = (settings.preferences as Record<string, any>)?.showNsfw ?? false
   const nsfwKey = showNsfw ? 'nsfw' : 'sfw'
-  
-  // Create unique cache key for this query
-  const cacheKey = `deals:${opts.sort || 'hot'}:${opts.type || 'all'}:${opts.categorySlug || 'all'}:${opts.merchant || 'all'}:${page}:${limit}:${mutedKey}:${nsfwKey}`
-  const cachedData = await getCached<{deals: any[], total: number, pages: number}>(cacheKey)
+
+  // Data-shape signature — prevents a lean persona's payload poisoning a full persona's cache.
+  const shapeKey = `img${needsImage ? 1 : 0}desc${needsDescription ? 1 : 0}ph${needsPriceHistory ? 1 : 0}`
+
+  const priceKey = opts.priceMin !== undefined || opts.priceMax !== undefined
+    ? `${opts.priceMin ?? ''}-${opts.priceMax ?? ''}`
+    : 'any'
+  const cacheKey = `deals:${opts.sort || 'hot'}:${opts.type || 'all'}:${opts.categorySlug || 'all'}:${opts.merchant || 'all'}:${page}:${limit}:${mutedKey}:${nsfwKey}:${shapeKey}:p${priceKey}:t${opts.tempFilter || 'any'}`
+  const cachedData = await getCached<{deals: DealCardData[], total: number, pages: number}>(cacheKey)
   if (cachedData) return cachedData
 
   let where: any = { status: 'ACTIVE' }
@@ -187,6 +241,16 @@ export async function getDeals(opts: {
     where.isNsfw = false
   }
 
+  if (opts.priceMin !== undefined || opts.priceMax !== undefined) {
+    where.price = {}
+    if (opts.priceMin !== undefined) where.price.gte = opts.priceMin
+    if (opts.priceMax !== undefined) where.price.lte = opts.priceMax
+  }
+
+  if (opts.tempFilter === 'hot') where.temperature = { gte: 100 }
+  else if (opts.tempFilter === 'warm') where.temperature = { gte: 0, lt: 100 }
+  else if (opts.tempFilter === 'cold') where.temperature = { lt: 0 }
+
   let finalDeals: any[] = []
   let totalCount = 0
 
@@ -196,16 +260,12 @@ export async function getDeals(opts: {
       where,
       orderBy: { createdAt: 'desc' },
       take: 200,
-      include: {
-        category: true,
-        user: { select: { id: true, name: true, avatar: true, tier: true } },
-        _count: { select: { comments: true } }
-      }
-    })
-    
+      select: dealSelect,
+    }) as unknown as DealCardData[]
+
     // HN Ranking: Points / (Age_Hours + 2)^1.8
     const now = Date.now()
-    allRecent.sort((a, b) => {
+    allRecent.sort((a: any, b: any) => {
       const pointsA = Math.max(a.temperature / 10, 0)
       const pointsB = Math.max(b.temperature / 10, 0)
       const hoursA = (now - a.createdAt.getTime()) / 3600000
@@ -230,15 +290,11 @@ export async function getDeals(opts: {
         orderBy,
         skip,
         take: limit,
-        include: {
-          category: true,
-          user: { select: { id: true, name: true, avatar: true, tier: true } },
-          _count: { select: { comments: true } }
-        }
+        select: dealSelect,
       }),
       db.deal.count({ where })
     ])
-    finalDeals = fetchedDeals
+    finalDeals = fetchedDeals as unknown as DealCardData[]
     totalCount = count
   }
 
@@ -254,6 +310,16 @@ export async function getDeals(opts: {
   return response
 }
 
+export async function getSavedDealIds(dealIds: string[]): Promise<string[]> {
+  const s = await auth.api.getSession({ headers: await headers() })
+  if (!s?.user || dealIds.length === 0) return []
+  const bookmarks = await db.bookmark.findMany({
+    where: { userId: s.user.id, dealId: { in: dealIds } },
+    select: { dealId: true },
+  })
+  return bookmarks.map(b => b.dealId)
+}
+
 export async function expireDeal(dealId: string) {
   const s = await getSession()
   const deal = await db.deal.findUnique({ where: { id: dealId } })
@@ -263,5 +329,5 @@ export async function expireDeal(dealId: string) {
   }
   await db.deal.update({ where: { id: dealId }, data: { status: 'EXPIRED' } })
   await invalidateCache('deals:*')
-  revalidatePath('/[locale]/deal/[slug]')
+  revalidatePath(routes.deal('[slug]'))
 }

@@ -1,7 +1,10 @@
 import { db } from '@/lib/db'
-import { sendEmail } from '@/lib/email'
+import { sendEmail, resend } from '@/lib/email'
 import { render } from 'react-email'
 import DealAlertEmail from '@/emails/deal-alert'
+
+// Email disabled until a provider (RESEND_API_KEY) is configured.
+const EMAIL_ENABLED = !!resend
 
 export async function matchDealWithAlerts(dealId: string) {
   // Fetch deal details
@@ -129,16 +132,18 @@ export async function matchDealWithAlerts(dealId: string) {
     })
   }
   
-  // Send emails
-  for (const email of emailsToSend) {
-    const html = await render(DealAlertEmail({
-      keyword: email.keyword,
-      dealTitle: email.dealTitle,
-      dealUrl: email.dealUrl,
-      price: email.price,
-      userName: email.userName
-    }))
-    // Fire and forget emails
-    sendEmail({ to: email.to, subject: `New Deal Alert: ${email.dealTitle}`, html }).catch(console.error)
+  // Send emails — skipped entirely when no provider configured (no wasted render).
+  if (EMAIL_ENABLED) {
+    for (const email of emailsToSend) {
+      const html = await render(DealAlertEmail({
+        keyword: email.keyword,
+        dealTitle: email.dealTitle,
+        dealUrl: email.dealUrl,
+        price: email.price,
+        userName: email.userName
+      }))
+      // Fire and forget emails
+      sendEmail({ to: email.to, subject: `New Deal Alert: ${email.dealTitle}`, html }).catch(console.error)
+    }
   }
 }

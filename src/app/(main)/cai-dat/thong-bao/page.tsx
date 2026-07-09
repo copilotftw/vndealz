@@ -6,7 +6,7 @@ import { SettingsCheckbox } from '@/components/settings/checkbox'
 import { useState, useEffect, useTransition } from 'react'
 import { getUserSettings, updateNotificationSettings } from '@/server/actions/settings'
 import { toast } from 'sonner'
-import { Loader2 } from 'lucide-react'
+
 
 export default function NotificationsPage() {
   const t = useTranslations('settings')
@@ -79,7 +79,7 @@ export default function NotificationsPage() {
     })
   }
 
-  if (!settings) return <div className="p-12 flex justify-center"><Loader2 className="w-8 h-8 animate-spin" /></div>
+  if (!settings) return null
 
   return (
     <div className="max-w-2xl text-[var(--color-text)]">

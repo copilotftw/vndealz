@@ -104,7 +104,7 @@ export default function FollowersPage() {
     })
   }
 
-  if (!data) return <div className="p-12 flex justify-center"><Loader2 className="w-8 h-8 animate-spin" /></div>
+  if (!data) return null
 
   return (
     <div className="max-w-2xl text-[var(--color-text)]">

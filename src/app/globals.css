@@ -4,6 +4,7 @@
 @import "shadcn/tailwind.css";
 
 /* Modular theme CSS */
+@import "../components/theme/tokens/primitives.css";
 @import "../styles/theme/layout.css";
 @import "../styles/theme/components.css";
 @import "../styles/theme/navbar.css";
@@ -25,9 +26,11 @@
 
   html {
     scroll-behavior: smooth;
-    /* ponytail: single font stack, no extra import */
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     @apply font-sans;
+    /* Scale factor drives root font-size so ALL rem-based values
+       (Tailwind padding, width, height, gap, text) scale proportionally. */
+    font-size: calc(16px * var(--scale-factor, 1));
   }
 
   body {

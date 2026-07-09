@@ -9,10 +9,13 @@ import { Row3Injector } from '@/components/layout/row3-injector'
 import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
 import { RelatedDeals } from '@/components/deal/related-deals'
+import { getThemeStyles } from '@/components/theme/theme-provider'
 
 export default async function DealPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params
   const locale = await getLocale()
+  const { layout } = await getThemeStyles()
+  const isPulse = layout === 'pulse'
   
   const deal = await db.deal.findUnique({
     where: { slug: resolvedParams.slug },
@@ -63,7 +66,7 @@ export default async function DealPage({ params }: { params: Promise<{ slug: str
   ) : null
 
   return (
-    <div className="max-w-[1100px] mx-auto flex flex-col gap-2">
+    <div className={isPulse ? 'flex flex-col' : 'max-w-[1100px] mx-auto flex flex-col gap-2'}>
       {breadcrumb && <Row3Injector content={breadcrumb} />}
       <DealDetail deal={serializedDeal as any} locale={locale} initialIsSaved={isSaved} />
       

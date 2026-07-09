@@ -1,17 +1,31 @@
 import { db } from '@/lib/db'
+import { resend } from '@/lib/email'
 
-type NotificationEvent = 
+// Email disabled until a provider (RESEND_API_KEY) is configured.
+const EMAIL_ENABLED = !!resend
+
+type NotificationEvent =
   | 'browser.pm'
   | 'general.mention'
   | 'myDeals.dealRated'
   | 'myDeals.dealCommented'
   | 'myDeals.dealHot'
   | 'myDeals.dealInfoAdded'
+  | 'myDeals.dealBeforeExpire'
+  | 'myDeals.dealExpired'
+  | 'myDeals.dealUnexpired'
+  | 'myDeals.dealCheckActive'
+  | 'myDeals.dealStats'
   | 'followedDeals.followedCommented'
   | 'followedDeals.followedInfoAdded'
+  | 'myAddedInfo.infoLiked'
   | 'clubPoints.levelUp'
   | 'clubPoints.loseBenefits'
+  | 'clubPoints.commentHelpful'
+  | 'clubPoints.pointsVoted'
+  | 'clubPoints.refUsed'
   | 'badges.newBadge'
+  | 'badges.superPoster'
   | 'follows.followedPosted'
 
 export async function sendNotification({
@@ -57,9 +71,9 @@ export async function sendNotification({
       })
     }
     
-    if (isEmailEnabled) {
-      // Future: Queue email via Resend or AWS SES
-      console.log(`[Email Mock] Sending email to User ${userId} for event ${event}`)
+    if (isEmailEnabled && EMAIL_ENABLED) {
+      // TODO: render + queue email via lib/email sendEmail once a provider is set.
+      // Intentionally a no-op for now (no RESEND_API_KEY).
     }
     
   } catch (error) {

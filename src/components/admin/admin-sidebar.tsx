@@ -1,26 +1,30 @@
 import Link from 'next/link'
 import { LayoutDashboard, Shield, Tag, Users, FolderTree, Flag, Palette, Link2, Megaphone } from 'lucide-react'
+import { getTranslations } from 'next-intl/server'
 import { db } from '@/lib/db'
 
 export async function AdminSidebar() {
-  const pendingCount = await db.deal.count({ where: { status: 'PENDING' } })
-  const reportsCount = await db.report.count({ where: { status: 'PENDING' } })
+  const [t, pendingCount, reportsCount] = await Promise.all([
+    getTranslations('admin'),
+    db.deal.count({ where: { status: 'PENDING' } }),
+    db.report.count({ where: { status: 'PENDING' } }),
+  ])
 
   const links = [
-    { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/admin/moderation', label: 'Duyệt bài', icon: Shield, badge: pendingCount },
-    { href: '/admin/deals', label: 'Deals', icon: Tag },
-    { href: '/admin/users', label: 'Người dùng', icon: Users },
-    { href: '/admin/categories', label: 'Danh mục', icon: FolderTree },
-    { href: '/admin/reports', label: 'Báo cáo', icon: Flag, badge: reportsCount },
-    { href: '/admin/theme', label: 'Giao diện', icon: Palette },
-    { href: '/admin/affiliates', label: 'Affiliate', icon: Link2 },
-    { href: '/admin/ads', label: 'Quảng cáo', icon: Megaphone },
+    { href: '/quan-tri', label: t('dashboard'), icon: LayoutDashboard },
+    { href: '/quan-tri/kiem-duyet', label: t('moderation'), icon: Shield, badge: pendingCount },
+    { href: '/quan-tri/bai-dang', label: t('deals'), icon: Tag },
+    { href: '/quan-tri/nguoi-dung', label: t('users'), icon: Users },
+    { href: '/quan-tri/danh-muc', label: t('categories'), icon: FolderTree },
+    { href: '/quan-tri/bao-cao', label: t('reports'), icon: Flag, badge: reportsCount },
+    { href: '/quan-tri/giao-dien', label: t('theme'), icon: Palette },
+    { href: '/quan-tri/doi-tac', label: t('affiliates'), icon: Link2 },
+    { href: '/quan-tri/quang-cao', label: t('ads'), icon: Megaphone },
   ]
 
   return (
     <aside className="w-full md:w-60 glass-subtle h-full overflow-y-auto p-4 flex md:flex-col gap-2 md:gap-0">
-      
+
       <nav className="flex flex-row md:flex-col gap-1.5 md:space-y-1.5 flex-1 overflow-x-auto md:overflow-x-visible pb-2 md:pb-0 no-scrollbar">
         {links.map((link) => (
           <Link
@@ -38,12 +42,7 @@ export async function AdminSidebar() {
           </Link>
         ))}
       </nav>
-      
-      <div className="mt-auto pt-4 border-t border-[var(--color-border)] px-2">
-        <Link href="/" className="text-sm font-medium text-[var(--color-primary)] hover:underline">
-          &larr; Quay lại trang chủ
-        </Link>
-      </div>
+
     </aside>
   )
 }

@@ -4,6 +4,7 @@ import { db } from '@/lib/db'
 import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
 import { revalidatePath } from 'next/cache'
+import { routes } from '@/lib/routes'
 
 async function getSession() {
   const s = await auth.api.getSession({ headers: await headers() })
@@ -40,5 +41,5 @@ export async function resolveReport(reportId: string, action: 'DISMISS' | 'DELET
     data: { status: 'RESOLVED' }
   })
 
-  revalidatePath('/[locale]/admin/reports')
+  revalidatePath(routes.admin.reports)
 }

@@ -1,5 +1,31 @@
-export const mydealz = {
-  
+import type { LayoutPersona } from '../persona'
+
+const mydealz: LayoutPersona = {
+  name: 'mydealz',
+  composer: 'mydealz',
+
+  shell: {
+    nav: 'standard',
+    sidebar: 'tree',
+    footer: 'full',
+    background: 'flat',
+    contentMaxWidth: '1300px',
+  },
+
+  data: {
+    needsImage: true,
+    needsDescription: true,
+    needsPriceHistory: true,
+    pageSize: 20,
+  },
+
+  scaleConfig: {
+    densityFactor: 1.0,
+    usesColumnGrid: false,
+    scalesFonts: true,
+  },
+
+  tokens: {
     '--layout-name': 'mydealz',
     '--card-border-radius': '0.5rem',
     '--card-shadow': '0 1px 3px rgba(0,0,0,0.05)',
@@ -12,7 +38,7 @@ export const mydealz = {
     '--card-image-height': '160px',
     '--card-image-ratio': '1/1',
     '--card-padding': '1rem',
-    '--grid-columns-base': '1', // always 1 col list
+    '--grid-columns-base': '1',
     '--nav-style': 'sticky',
     '--nav-blur': 'none',
     '--nav-bg': 'var(--color-nav-bg)',
@@ -30,6 +56,12 @@ export const mydealz = {
     '--glass-blur': 'blur(8px)',
     '--glass-border': '1px solid rgba(255,255,255,0.12)',
     '--glass-border-dark': '1px solid rgba(255,255,255,0.06)',
-  } as const;
+  },
 
-export default mydealz;
+  motion: {
+    cardEnter: 'fade-up',
+    viewTransition: true,
+  },
+}
+
+export default mydealz

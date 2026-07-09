@@ -5,6 +5,7 @@ import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
 import { commentSchema } from '@/lib/validations'
 import { revalidatePath } from 'next/cache'
+import { routes } from '@/lib/routes'
 import { evaluateGamification } from '@/lib/gamification/engine'
 import { getMutedUserIds } from './user'
 import { getSafeUserSettings } from './settings'
@@ -62,7 +63,7 @@ export async function createComment(input: { content: string; dealId?: string; p
         })
       }
       
-      revalidatePath(`/[locale]/deal/${deal.slug}`)
+      revalidatePath(routes.deal(deal.slug))
     }
   }
   
@@ -122,7 +123,7 @@ export async function reactToComment(commentId: string) {
   
   if (comment.dealId) {
     const deal = await db.deal.findUnique({ where: { id: comment.dealId } })
-    if (deal) revalidatePath(`/[locale]/deal/${deal.slug}`)
+    if (deal) revalidatePath(routes.deal(deal.slug))
   }
 }
 
@@ -143,6 +144,6 @@ export async function deleteComment(commentId: string) {
   
   if (comment.dealId) {
     const deal = await db.deal.findUnique({ where: { id: comment.dealId } })
-    if (deal) revalidatePath(`/[locale]/deal/${deal.slug}`)
+    if (deal) revalidatePath(routes.deal(deal.slug))
   }
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { X, Copy, Check } from 'lucide-react'
 import { toast } from 'sonner'
@@ -18,6 +19,7 @@ interface ShareDealModalProps {
 }
 
 export function ShareDealModal({ isOpen, onClose, deal }: ShareDealModalProps) {
+  const t = useTranslations('deal')
   const [copied, setCopied] = useState(false)
 
   if (!isOpen) return null
@@ -28,7 +30,7 @@ export function ShareDealModal({ isOpen, onClose, deal }: ShareDealModalProps) {
   const handleCopy = () => {
     navigator.clipboard.writeText(shareUrl)
     setCopied(true)
-    toast.success('Đã sao chép liên kết!')
+    toast.success(t('linkCopied'))
     setTimeout(() => setCopied(false), 2000)
   }
 
@@ -90,12 +92,12 @@ export function ShareDealModal({ isOpen, onClose, deal }: ShareDealModalProps) {
             {copied ? (
               <>
                 <Check className="w-5 h-5" />
-                Đã sao chép
+                {t('copied')}
               </>
             ) : (
               <>
                 <Copy className="w-5 h-5" />
-                Sao chép liên kết
+                {t('copyLink')}
               </>
             )}
           </button>

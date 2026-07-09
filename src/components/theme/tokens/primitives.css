@@ -1,0 +1,36 @@
+/* ── PRIMITIVE DERIVATIONS ───────────────────────────────────────
+ * Derives font sizes and spacing from the two linear scale vars:
+ *   --scale-factor      injected by ThemeProvider from SCALE_PRESETS
+ *   --persona-space-unit  injected by ThemeProvider = space-unit * densityFactor
+ *
+ * These rules live in CSS (not server-side TS) so every persona
+ * automatically inherits correct values without enumeration.
+ * ──────────────────────────────────────────────────────────────── */
+
+:root {
+  /* Font size scale — bare rem; root font-size drives scaling via --scale-factor */
+  --font-size-xs:   0.625rem;
+  --font-size-sm:   0.75rem;
+  --font-size-base: 0.875rem;
+  --font-size-lg:   1rem;
+  --font-size-xl:   1.25rem;
+  --font-size-2xl:  1.5rem;
+  --font-size-3xl:  2rem;
+
+  /* Spacing scale — derived from --persona-space-unit (space-unit * densityFactor)
+     Personas control density via densityFactor; scale controls absolute size. */
+  --card-gap:       calc(var(--persona-space-unit, 16px) * 0.75);
+  --section-gap:    calc(var(--persona-space-unit, 16px) * 1.25);
+  --content-gap:    calc(var(--persona-space-unit, 16px) * 2);
+
+  /* Utility spacing tokens for use in components */
+  --space-1:  calc(var(--persona-space-unit, 16px) * 0.25);
+  --space-2:  calc(var(--persona-space-unit, 16px) * 0.5);
+  --space-3:  calc(var(--persona-space-unit, 16px) * 0.75);
+  --space-4:  var(--persona-space-unit, 16px);
+  --space-5:  calc(var(--persona-space-unit, 16px) * 1.25);
+  --space-6:  calc(var(--persona-space-unit, 16px) * 1.5);
+  --space-8:  calc(var(--persona-space-unit, 16px) * 2);
+  --space-10: calc(var(--persona-space-unit, 16px) * 2.5);
+  --space-12: calc(var(--persona-space-unit, 16px) * 3);
+}

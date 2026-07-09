@@ -1,4 +1,5 @@
 import { db } from '@/lib/db'
+import { sendNotification } from '@/server/services/notification'
 
 export async function evaluateGamification(userId: string) {
   try {
@@ -53,17 +54,14 @@ export async function evaluateGamification(userId: string) {
       if (achieved) {
         badgesToAward.push(badge.id)
         pointsToAdd += badge.points
-        
-        // Create notification for earned badge
-        await db.notification.create({
-          data: {
-            userId,
-            type: 'BADGE_EARNED',
-            title: 'Chúc mừng! Bạn nhận được một danh hiệu mới',
-            body: `Bạn vừa nhận được danh hiệu: ${badge.nameVi}`,
-            link: `/ho-so/${user.username}`
-          }
-        })
+
+        sendNotification({
+          userId,
+          event: 'badges.newBadge',
+          title: 'Huy hiệu mới!',
+          body: `Bạn vừa nhận được huy hiệu "${badge.nameVi}"`,
+          link: '/danh-hieu',
+        }).catch(console.error)
       }
     }
 
@@ -85,6 +83,16 @@ export async function evaluateGamification(userId: string) {
           }
         }
       })
+
+      if (newTier !== user.tier) {
+        sendNotification({
+          userId,
+          event: 'clubPoints.levelUp',
+          title: 'Lên cấp!',
+          body: `Chúc mừng! Bạn vừa đạt cấp mới`,
+          link: '/danh-hieu',
+        }).catch(console.error)
+      }
     }
 
   } catch (error) {
